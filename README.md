@@ -1,0 +1,1 @@
+# jqa-ddd-plugin
