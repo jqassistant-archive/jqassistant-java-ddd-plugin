@@ -1,0 +1,5 @@
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.4" name="Shared Rules">
+    <description>Provides shared rules for the jQAssistant DDD Plugin.</description>
+    <rules>
+    </rules>
+</jqa-plugin:jqassistant-plugin>
