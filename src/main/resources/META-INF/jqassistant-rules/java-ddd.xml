@@ -35,10 +35,10 @@
               AND name.name = "name"
               AND packageInfo.sourceFileName = "package-info.java"
             WITH
-              bCPackage, name.value AS bCName   
+              bCPackage, name.value AS bCName
             MATCH
               (boundedContext:BoundedContext{name: bCName})
-            WITH 
+            WITH
               bCPackage, boundedContext
             MATCH
               (bCPackage)-[:CONTAINS*]->(contextType:Type)
@@ -63,15 +63,35 @@
               ]
               AND name.name = "name"
             WITH
-              contextType, name.value AS bCName   
+              contextType, name.value AS bCName
             MATCH
               (boundedContext:BoundedContext{name: bCName})
-            WITH 
-              contextType, boundedContext           
+            WITH
+              contextType, boundedContext
             MERGE
               (boundedContext)-[:CONTAINS]->(contextType)
             RETURN
               boundedContext.name, contextType.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:BoundedContextDependency">
+        <requiresConcept refId="java-ddd:BoundedContextPackage"/>
+        <requiresConcept refId="java-ddd:BoundedContextType"/>
+        <description>Propagates the dependencies between Types of different Bounded Contexts to the level of Bounded Contexts including an aggregated weight.</description>
+        <cypher><![CDATA[
+            MATCH
+              (boundedContext1:BoundedContext)-[:CONTAINS]->(contextType1:Type),
+              (boundedContext2:BoundedContext)-[:CONTAINS]->(contextType2:Type),
+              (contextType1)-[d:DEPENDS_ON]->(contextType2)
+            WHERE
+               boundedContext1 <> boundedContext2
+            WITH
+              boundedContext1, boundedContext2, sum(d.weight) AS totalWeight
+            MERGE
+              (boundedContext1)-[d:DEPENDS_ON{weight: totalWeight}]->(boundedContext2)
+            RETURN
+              boundedContext1 AS Source, sum(d.weight) AS weight, boundedContext2 AS Target
         ]]></cypher>
     </concept>
 
@@ -170,7 +190,7 @@
             RETURN
               valueObject AS ValueObject
         ]]></cypher>
-    </concept> 
+    </concept>
 
     <concept id="java-ddd:ValueObjectType">
         <description>Labels all Java types which are annotated by javax.persistence.Embeddable or
@@ -209,7 +229,7 @@
             RETURN
               service AS Service
         ]]></cypher>
-    </concept> 
+    </concept>
 
     <concept id="java-ddd:ServiceType">
         <description>Labels all Java types which are annotated by
@@ -247,7 +267,7 @@
             RETURN
               repository AS Repository
         ]]></cypher>
-    </concept> 
+    </concept>
 
     <concept id="java-ddd:RepositoryType">
         <description>Labels all Java types which are annotated by
