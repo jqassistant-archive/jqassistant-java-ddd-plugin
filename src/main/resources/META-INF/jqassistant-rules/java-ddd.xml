@@ -4,25 +4,137 @@
         <includeConcept refId="java-ddd:*" severity="info"/>
     </group>
 
-    <concept id="java-ddd:Entity">
-        <description>Labels all Java types which are annotated by javax.persistence.Entity or
-            org.jqassistant.contrib.plugin.ddd.annotation.DDD.Entity as :DDD:Entity.</description>
+    <concept id="java-ddd:PrepareBoundedContext">
+        <description>Creates a bounded context node per defined bounded context (identified by name) based on org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext.</description>
         <cypher><![CDATA[
             MATCH
-              (entity:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
+             ()-[:ANNOTATED_BY]->(annotation)-[:OF_TYPE]->(annotationType:Type),
+             (annotation)-[:HAS]->(value:Value)
+            WHERE
+              annotationType.fqn = "org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext" AND
+              value.name = "name"
+            MERGE
+              (boundedContext:BoundedContext{name: value.value})
+            RETURN
+              boundedContext
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:BoundedContextPackage">
+        <requiresConcept refId="java-ddd:PrepareBoundedContext"/>
+        <description>Maps all Java types which are located in a package annotated by
+            org.jqassistant.contrib.plugin.ddd.annotation.DDD.BoundedContext to the corresponding BoundedContext node.</description>
+        <cypher><![CDATA[
+            MATCH
+              (bCPackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type),
+              (a)-[:HAS]->(name:Value)
             WHERE
               annotation.fqn IN [
-                "javax.persistence.Entity",
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext"
+              ]
+              AND name.name = "name"
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              bCPackage, name.value AS bCName   
+            MATCH
+              (boundedContext:BoundedContext{name: bCName})
+            WITH 
+              bCPackage, boundedContext
+            MATCH
+              (bCPackage)-[:CONTAINS*]->(contextType:Type)
+            MERGE
+              (boundedContext)-[c:CONTAINS]->(contextType)
+            RETURN
+              boundedContext.name, contextType.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:BoundedContextType">
+        <requiresConcept refId="java-ddd:PrepareBoundedContext"/>
+        <description>Maps all Java types which are annotated by
+            org.jqassistant.contrib.plugin.ddd.annotation.DDD.BoundedContext to the corresponding BoundedContext node.</description>
+        <cypher><![CDATA[
+            MATCH
+              (contextType:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type),
+              (a)-[:HAS]->(name:Value)
+            WHERE
+              annotation.fqn IN [
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext"
+              ]
+              AND name.name = "name"
+            WITH
+              contextType, name.value AS bCName   
+            MATCH
+              (boundedContext:BoundedContext{name: bCName})
+            WITH 
+              contextType, boundedContext           
+            MERGE
+              (boundedContext)-[:CONTAINS]->(contextType)
+            RETURN
+              boundedContext.name, contextType.fqn
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:EntityPackage">
+        <description>Labels all Java types which are located in package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Entity as :DDD:Entity.</description>
+        <cypher><![CDATA[
+	    MATCH
+              (entityPackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
                 "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Entity"
               ]
-            SET
-              entity:DDD:Entity
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              entityPackage
+            MATCH
+              (entityPackage)-[:CONTAINS*]->(entity:Type)
+	    SET
+  	      entity:DDD:Entity
             RETURN
               entity AS Entity
         ]]></cypher>
     </concept>
 
-    <concept id="java-ddd:Aggregate">
+    <concept id="java-ddd:EntityType">
+        <description>Labels all Java types which are annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Entity or javax.persistence.Entity as :DDD:Entity.</description>
+        <cypher><![CDATA[
+	    MATCH
+              (entity:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Entity",
+ 		"javax.persistence.Entity"
+              ]
+	    SET
+  	      entity:DDD:Entity
+            RETURN
+              entity AS Entity
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:AggregatePackage">
+        <description>Labels all Java types which are located in package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Aggregate as :DDD:Aggregate.</description>
+        <cypher><![CDATA[
+	    MATCH
+              (aggregatePackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Aggregate"
+              ]
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              aggregatePackage
+            MATCH
+              (aggregatePackage)-[:CONTAINS*]->(aggregate:Type)
+	    SET
+  	      aggregate:DDD:Aggregate
+            RETURN
+              aggregate AS Aggregate
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:AggregateType">
         <description>Labels all Java types which are annotated by
             org.jqassistant.contrib.plugin.ddd.annotation.DDD.Aggregate as :DDD:Aggregate.</description>
         <cypher><![CDATA[
@@ -39,7 +151,28 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java-ddd:ValueObject">
+    <concept id="java-ddd:ValueObjectPackage">
+        <description>Labels all Java types which are located in a package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.ValueObject as :DDD:ValueObject.</description>
+        <cypher><![CDATA[
+	    MATCH
+              (valueObjectPackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$ValueObject"
+              ]
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              valueObjectPackage
+            MATCH
+              (valueObjectPackage)-[:CONTAINS*]->(valueObject:Type)
+	    SET
+  	      valueObject:DDD:ValueObject
+            RETURN
+              valueObject AS ValueObject
+        ]]></cypher>
+    </concept> 
+
+    <concept id="java-ddd:ValueObjectType">
         <description>Labels all Java types which are annotated by javax.persistence.Embeddable or
             org.jqassistant.contrib.plugin.ddd.annotation.DDD.ValueObject as :DDD:ValueObject.</description>
         <cypher><![CDATA[
@@ -57,7 +190,28 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java-ddd:Service">
+    <concept id="java-ddd:ServicePackage">
+        <description>Labels all Java types which are located in a package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Service as :DDD:Service.</description>
+        <cypher><![CDATA[
+	    MATCH
+              (servicePackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Service"
+              ]
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              servicePackage
+            MATCH
+              (servicePackage)-[:CONTAINS*]->(service:Type)
+	    SET
+  	      service:DDD:Service
+            RETURN
+              service AS Service
+        ]]></cypher>
+    </concept> 
+
+    <concept id="java-ddd:ServiceType">
         <description>Labels all Java types which are annotated by
             org.jqassistant.contrib.plugin.ddd.annotation.DDD.Service as :DDD:Service.</description>
         <cypher><![CDATA[
@@ -74,7 +228,28 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java-ddd:Repository">
+    <concept id="java-ddd:RepositoryPackage">
+        <description>Labels all Java types which are located in a package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Repository as :DDD:Repository.</description>
+        <cypher><![CDATA[
+	    MATCH
+              (repositoryPackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Repository"
+              ]
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              repositoryPackage
+            MATCH
+              (repositoryPackage)-[:CONTAINS*]->(repository:Type)
+	    SET
+  	      repository:DDD:Repository
+            RETURN
+              repository AS Repository
+        ]]></cypher>
+    </concept> 
+
+    <concept id="java-ddd:RepositoryType">
         <description>Labels all Java types which are annotated by
             org.jqassistant.contrib.plugin.ddd.annotation.DDD.Repository as :DDD:Repository.</description>
         <cypher><![CDATA[
@@ -91,7 +266,28 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java-ddd:DomainEvent">
+    <concept id="java-ddd:DomainEventPackage">
+        <description>Labels all Java types which are located in a package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.DomainEvent as :DDD:DomainEvent.</description>
+        <cypher><![CDATA[
+	    MATCH
+              (domainEventPackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$DomainEvent"
+              ]
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              domainEventPackage
+            MATCH
+              (domainEventPackage)-[:CONTAINS*]->(domainEvent:Type)
+	    SET
+  	      domainEvent:DDD:DomainEvent
+            RETURN
+              domainEvent AS DomainEvent
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:DomainEventType">
         <description>Labels all Java types which are annotated by
             org.jqassistant.contrib.plugin.ddd.annotation.DDD.DomainEvent as :DDD:DomainEvent.</description>
         <cypher><![CDATA[
@@ -108,7 +304,28 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java-ddd:Factory">
+    <concept id="java-ddd:FactoryPackage">
+        <description>Labels all Java types which are located in a package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Factory as :DDD:Factory.</description>
+        <cypher><![CDATA[
+	    MATCH
+              (factoryPackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Factory"
+              ]
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              factoryPackage
+            MATCH
+              (factoryPackage)-[:CONTAINS*]->(factory:Type)
+	    SET
+  	      factory:DDD:Factory
+            RETURN
+              factory AS Factory
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:FactoryType">
         <description>Labels all Java types which are annotated by
             org.jqassistant.contrib.plugin.ddd.annotation.DDD.Factory as :DDD:Factory.</description>
         <cypher><![CDATA[
@@ -124,43 +341,5 @@
               factory AS Factory
         ]]></cypher>
     </concept>
-
-    <concept id="java-ddd:PrepareBoundedContext">
-        <description>Creates a bounded context node per defined bounded context (identified by name) based on org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext.</description>
-        <cypher><![CDATA[
-            MATCH
-             ()-[:ANNOTATED_BY]->(annotation)-[:OF_TYPE]->(annotationType:Type),
-             (annotation)-[:HAS]->(value:Value)
-            WHERE
-              annotationType.fqn = "org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext" AND
-              value.name = "name"
-            MERGE
-              (boundedContext:BoundedContext{name: value.value})
-            RETURN
-              boundedContext
-        ]]></cypher>
-    </concept>
-
-    <concept id="java-ddd:MapBoundedContext">
-        <requiresConcept refId="java-ddd:PrepareBoundedContext"/>
-        <description>Maps all Java types which are annotated by
-            org.jqassistant.contrib.plugin.ddd.annotation.DDD.BoundedContext and all types in packages annotated that way as :DDD:BoundedContext.</description>
-        <cypher><![CDATA[
-            MATCH
-              (boundedContext:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type),
-              (a)-[:HAS]->(name:Value)
-            WHERE
-              annotation.fqn IN [
-                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext"
-              ]
-              AND name.name = "name"
-              AND packageInfo.sourceFileName = "package-info.java"
-            MERGE
-              (boundedContext)-[:CONTAINS]->(contextType)
-            RETURN
-              boundedContext, contextType
-        ]]></cypher>
-    </concept>
-
 
 </jqa:jqassistant-rules>
