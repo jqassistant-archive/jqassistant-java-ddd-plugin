@@ -1,1 +1,13 @@
 = jQAssistant DDD Plugin
+
+== DDD Concepts
+
+The jQAssistant DDD plugin comes with jQA-concepts and Java-annotations for multiple DDD concepts.
+
+=== Bounded Context
+=== Domain Event
+=== Aggregate
+=== Entity
+=== Value Object
+=== Service
+=== Repository
