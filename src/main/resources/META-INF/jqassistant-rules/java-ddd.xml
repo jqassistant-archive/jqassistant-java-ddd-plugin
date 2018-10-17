@@ -84,15 +84,18 @@
               (boundedContext1:BoundedContext)-[:CONTAINS]->(contextType1:Type),
               (boundedContext2:BoundedContext)-[:CONTAINS]->(contextType2:Type),
               (contextType1)-[d:DEPENDS_ON]->(contextType2)
-            WHERE
-               boundedContext1 <> boundedContext2
             WITH
               boundedContext1, boundedContext2, sum(d.weight) AS totalWeight
             MERGE
               (boundedContext1)-[d:DEPENDS_ON{weight: totalWeight}]->(boundedContext2)
             RETURN
-              boundedContext1 AS Source, sum(d.weight) AS weight, boundedContext2 AS Target
+              boundedContext1.name AS Source, sum(d.weight) AS Weight, boundedContext2.name AS Target
         ]]></cypher>
+        <report type="d3js">
+            <property name="diagram-type">chord</property>
+            <property name="data-format">csv</property>
+        </report>
+
     </concept>
 
     <concept id="java-ddd:EntityPackage">
