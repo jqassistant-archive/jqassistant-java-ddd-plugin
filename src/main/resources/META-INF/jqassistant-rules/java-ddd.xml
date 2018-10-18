@@ -343,8 +343,8 @@
               (factoryPackage)-[:CONTAINS*]->(factory:Type)
 	    SET
   	      factory:DDD:Factory
-            RETURN
-              factory AS Factory
+        RETURN
+          factory AS Factory
         ]]></cypher>
     </concept>
 
@@ -362,6 +362,49 @@
               factory:DDD:Factory
             RETURN
               factory AS Factory
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:LayerPackage">
+        <description>Labels all Java types which are annotated by
+            org.jqassistant.contrib.plugin.ddd.annotation.DDD.Layer.X as :DDD:Layer:X.</description>
+        <cypher><![CDATA[
+            MATCH
+              (layerPackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn STARTS WITH "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Layer"
+              AND packageInfo.sourceFileName = "package-info.java"
+            WITH
+              layerPackage, annotation
+            MATCH
+              (layerPackage)-[:CONTAINS*]->(layer:Type)
+            WITH
+              layer AS layer, annotation.name AS layerName
+            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$InterfaceLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:InterfaceLayer)
+            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$ApplicationLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:ApplicationLayer)
+            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$DomainLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:DomainLayer)
+            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$InfrastructureLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:InfrastructureLayer)
+            RETURN
+              layer AS Type, layerName AS Layer
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:LayerType">
+        <description>Labels all Java types which are annotated by
+            org.jqassistant.contrib.plugin.ddd.annotation.DDD.Layer.X as :DDD:Layer:X.</description>
+        <cypher><![CDATA[
+            MATCH
+              (layer:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn STARTS WITH "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Layer$"
+            WITH
+              layer AS layer, annotation.name AS layerName
+            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$InterfaceLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:InterfaceLayer)
+            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$ApplicationLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:ApplicationLayer)
+            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$DomainLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:DomainLayer)
+            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$InfrastructureLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:InfrastructureLayer)
+            RETURN
+              layer AS Type, layerName AS Layer
         ]]></cypher>
     </concept>
 

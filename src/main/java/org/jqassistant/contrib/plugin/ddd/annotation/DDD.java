@@ -5,13 +5,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
+/**
+ * Representation of the DDD concepts.
+ *
+ * @author stephan.pirnbaum
+ */
 @Target({})
 public @interface DDD {
 
     /**
      * jQAssistant annotation to mark a Java package as part of the specific Bounded Context. When applied to a package, the annotation is in effect for all contained types.
-     *
-     * @author stephan.pirnbaum
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
@@ -28,72 +32,86 @@ public @interface DDD {
 
     /**
      * jQAssistant annotation to mark a Java type as DDD Repository. When applied to a package, the annotation is in effect for all contained types.
-     *
-     * @author stephan.pirnbaum
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
-    @interface Repository {
-    }
+    @interface Repository { }
 
     /**
      * jQAssistant annotation to mark a Java type as DDD Value Object. When applied to a package, the annotation is in effect for all contained types.
-     *
-     * @author stephan.pirnbaum
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
-    @interface ValueObject {
-    }
+    @interface ValueObject { }
 
     /**
      * jQAssistant annotation to mark a Java type as DDD Factory. When applied to a package, the annotation is in effect for all contained types.
-     *
-     * @author stephan.pirnbaum
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
-    @interface Factory {
-    }
+    @interface Factory { }
 
     /**
      * jQAssistant annotation to mark a Java type as DDD Service. When applied to a package, the annotation is in effect for all contained types.
-     *
-     * @author stephan.pirnbaum
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
-    @interface Service {
-    }
+    @interface Service { }
 
     /**
      * jQAssistant annotation to mark a Java type as DDD Entity. When applied to a package, the annotation is in effect for all contained types.
-     *
-     * @author stephan.pirnbaum
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
-    @interface Entity {
-    }
+    @interface Entity { }
 
     /**
      * jQAssistant annotation to mark a Java type as DDD Aggregate. When applied to a package, the annotation is in effect for all contained types.
-     *
-     * @author stephan.pirnbaum
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
-    @interface Aggregate {
-    }
+    @interface Aggregate { }
 
     /**
      * jQAssistant annotation to mark a Java type as DDD Domain Event. When applied to a package, the annotation is in effect for all contained types.
-     *
-     * @author stephan.pirnbaum
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
-    @interface DomainEvent {
-    }
+    @interface DomainEvent { }
 
+    /**
+     * Representation of the DDD Layer concept.
+     */
+    @Target({})
+    @interface Layer {
+
+        /**
+         * jQAssistant annotation to mark a Java type as part of the Interface Layer. When applied to a package, the annotation is in effect for all contained types.
+         */
+        @Retention(RetentionPolicy.CLASS)
+        @Target({ElementType.TYPE, ElementType.PACKAGE})
+        @interface InterfaceLayer {}
+
+        /**
+         * jQAssistant annotation to mark a Java type as part of the Application Layer. When applied to a package, the annotation is in effect for all contained types.
+         */
+        @Retention(RetentionPolicy.CLASS)
+        @Target({ElementType.TYPE, ElementType.PACKAGE})
+        @interface ApplicationLayer {}
+
+        /**
+         * jQAssistant annotation to mark a Java type as part of the Domain Layer. When applied to a package, the annotation is in effect for all contained types.
+         */
+        @Retention(RetentionPolicy.CLASS)
+        @Target({ElementType.TYPE, ElementType.PACKAGE})
+        @interface DomainLayer {}
+
+        /**
+         * jQAssistant annotation to mark a Java type as part of the Infrastructure Layer. When applied to a package, the annotation is in effect for all contained types.
+         */
+        @Retention(RetentionPolicy.CLASS)
+        @Target({ElementType.TYPE, ElementType.PACKAGE})
+        @interface InfrastructureLayer {}
+
+    }
 }
