@@ -128,7 +128,7 @@
             WHERE
               annotation.fqn IN [
                 "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Entity",
- 		"javax.persistence.Entity"
+ 		        "javax.persistence.Entity"
               ]
 	    SET
   	      entity:DDD:Entity

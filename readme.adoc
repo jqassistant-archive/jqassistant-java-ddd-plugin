@@ -2,12 +2,385 @@
 
 == DDD Concepts
 
-The jQAssistant DDD plugin comes with jQA-concepts and Java-annotations for multiple DDD concepts.
+The jQAssistant DDD plugin comes with jQA-concepts and Java-annotations for multiple DDD concepts. The supported DDD-concepts
+and how they are mapped in from source code to the graph is shown in the following list.
+
+All supported DDD-concepts can be applied both on package level (by annotating the package definition in a `package-info.java` file)
+or class level (by annotating a Java class).
 
 === Bounded Context
+
+A bounded context is a well-defined, functional consistent, and cohesive subset of the complete solution domain.
+It therewith represents the implementation of one functional slice of the problem space.
+
+A bounded context is identified by its name.
+In case that multiple bounded contexts with the same name were declared, only one node will be created.
+
+The bounded context nodes will be labeled by `:DDD:BoundedContext`.
+
+Package Level::
+
+All classes in the annotated package and its sub packages will be assigned to the corresponding node.
+
+.Definition of a bounded context and its contained types at package level.
+[source,java]
+----
+@BoundedContext(name = "catalog")
+package com.buschmais.shop.catalog;
+----
+
+Type Level::
+
+The annotated class will be assigned to the corresponding node.
+
+.Definition of a bounded context and its contained type using at class level.
+[source,java]
+----
+@BoundedContext(name = "catalog")
+public class Product { }
+----
+
 === Domain Event
+
+A domain event is a notice about the change of state in a functional sense, to which interested parties can listen.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:DomainEvent`.
+
+.Definition of domain events at the package level.
+[source,java]
+----
+@DomainEvent
+package com.buschmais.shop.catalog.event
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:DomainEvent`.
+
+.Definition of domain events at the type level.
+[source,java]
+----
+@DomainEvent
+public class ProductCreatedEvent { }
+----
+
 === Aggregate
+
+An aggregate is a logical, cohesive group of entities and value objects from the same bounded context.
+Manipulations to an aggregate or its contained entities and value objects may only be done through the aggregate root which
+itself represents some kind of an transaction boundary.
+Aggregates are used to gorup domain objects which need to stay absolutely consistent to each other and thus are rather small.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Aggregate`.
+
+.Definition of aggregates at the package level.
+[source,java]
+----
+@DomainEvent
+package com.buschmais.shop.catalog.model.aggregateroot
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Aggregate`.
+
+.Definition of aggregates at the type level.
+[source,java]
+----
+@Aggregate
+public class Product { }
+----
+
 === Entity
+
+An entity is a domain object which is not defined by its properties but by its unique identifier which will not change throughout its existence.
+
+Note: Both the `@Entity`-annotation provided by this plug-in as well as `@javax.persistence.Entity` will be treated as DDD entities.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Entity`.
+
+.Definition of entities at the package level.
+[source,java]
+----
+@Entity
+package com.buschmais.shop.catalog.model
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Entity`.
+
+.Definition of entities at the type level.
+[source,java]
+----
+@Entity
+public class Product { }
+----
+
 === Value Object
+
+Value objects are immutable domain objects which have no unique identifies but are identified by their properties.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:ValueObject`.
+
+.Definition of value objects at the package level.
+[source,java]
+----
+@ValueObject
+package com.buschmais.shop.catalog.model.valueobject
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:ValueObject`.
+
+.Definition of value objects at the type level.
+[source,java]
+----
+@Entity
+public class Price { }
+----
+
 === Service
+
+A service is a stateless object providing access to domain objects and implementing business rules as methods (commands and queries).
+Services operate on aggregates.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Service`.
+
+.Definition of services at the package level.
+[source,java]
+----
+@Service
+package com.buschmais.shop.catalog.service
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Service`.
+
+.Definition of services at the type level.
+[source,java]
+----
+@Service
+public class ProductService { }
+----
+
 === Repository
+
+A repository represents an accessor to a persistent store by both providing functionality to create and modify domain objects.
+Repositories operate on an aggregate.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Repository`.
+
+.Definition of repositories at the package level.
+[source,java]
+----
+@ValueObject
+package com.buschmais.shop.catalog.repository
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Repository`.
+
+.Definition of repositories at the type level.
+[source,java]
+----
+@Repository
+public class ProductRepository { }
+----
+
+=== Factory
+
+A factory takes care of creating a new entity or value object from given data or an already existing object and takes care of its invariants.
+A factory (method) can be present directly in the domain model class or as a separate class.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Factory`.
+
+.Definition of factories at the package level.
+[source,java]
+----
+@ValueObject
+package com.buschmais.shop.catalog.factory
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Factory`.
+
+.Definition of factories at the type level.
+[source,java]
+----
+@Repository
+public class ProdutFactory { }
+----
+
+=== Layer
+
+Besides the definition of functional concepts in DDD there are also requirements to the technical layering of the application stated.
+
+.Technical layers in DDD
+[plantuml, ddd-layering, svg]
+----
+component "Interface Layer" as interface
+component "Application Layer" as application
+component "Domain Layer" as domain
+component "Infrastructure Layer" as infrastructure
+
+interface --> application
+interface --> domain
+interface --> infrastructure
+application --> domain
+application --> infrastructure
+domain --> infrastructure
+----
+
+==== InterfaceLayer
+
+The infrastructure layer is the outermost layer in a DDD-architecture, providing access to the application to other services and the user.
+This layer is very thin and provides only rudimentary functionality for e.g. request handling. No domain logic shall be implemented by this layer.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Layer:InterfaceLayer`.
+
+.Assignement to the interface layer at the package level.
+[source,java]
+----
+@InterfaceLayer
+package com.buschmais.shop.catalog.interface
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Layer:InterfaceLayer`.
+
+.Assignment to the interface layer at the type level.
+[source,java]
+----
+@InterfaceLayer
+public class ProductController { }
+----
+
+==== ApplicationLayer
+
+The application layer is a thin layer orchestrating business use cases and spanning transactions.
+It implements no specific domain logic but coordinates the correct execution of scenarios.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Layer:ApplicationLayer`.
+
+.Assignement to the application layer at the package level.
+[source,java]
+----
+@ApplicationLayer
+package com.buschmais.shop.catalog.application
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Layer:ApplicationLayer`.
+
+.Assignment to the application layer at the type level.
+[source,java]
+----
+@InterfaceLayer
+public class ProductHandler { }
+----
+
+==== DomainLayer
+
+The domain layer is the heart of a DDD-structured application and implements the business logic and objects of bounded contexts.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Layer:DomainLayer`.
+
+.Assignement to the domain layer at the package level.
+[source,java]
+----
+@Domain
+package com.buschmais.shop.catalog.domain
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Layer:Domain`.
+
+.Assignment to the interface layer at the type level.
+[source,java]
+----
+@DomainLayer
+public class ProductService { }
+----
+
+==== InfrastructureLayer
+
+The infrastructure layer is the supporting layer for the other layer providing technical implementations like database access.
+Infrastructure can both be present in the bounded context scope (like when providing access to the product table) or in global scope, e.g. for sending e-mails.
+
+Package Level::
+
+All classes in the annotated package will be labeled as `:DDD:Layer:InfrastructureLayer`.
+
+.Assignement to the infrastructure layer at the package level.
+[source,java]
+----
+@InfrastructureLayer
+package com.buschmais.shop.catalog.infrastrucute
+----
+
+Type Level::
+
+The annotated class will be labeled as `:DDD:Layer:InfrastructureLayer`.
+
+.Assignment to the infrastructure layer at the type level.
+[source,java]
+----
+@InfrastructureLayer
+public class ProductRepositoryImpl { }
+----
+
+== DDD Constraints
+
+The jQAssistant DDD plug-in comes with several pre-defined constraints which with check the implemented architecture against the basic DDD architectural principles.
+
+All constraints will be active by default and configured with a `Major`-severity.
+
+=== java-ddd:TransactionsByApplicationLayer
+
+The constraint checks that transactions are only spanned by the application layer by checking that the following three annotations are not present in the interface, domain, and infrastructure layer
+
+- javax.transaction.Transactional
+- org.springframework.transaction.annotation.Transactional
+- javax.ejb.TransactionAttribute
+
+=== java-ddd:EntityAccessedByRepository
+
+The constraint checks that repositories do not work on entities but on aggregates by checking that they do not depend on entities.
+
+=== java-ddd:LayerDependencies
+
+The constraint checks that the aforementioned layer hierarchy is correctly implemented by the software.
+
+=== java-ddd:TypeInMultipleBoundedContexts
+
+The constraint checks that each type is only part of one bounded context.
+
+
