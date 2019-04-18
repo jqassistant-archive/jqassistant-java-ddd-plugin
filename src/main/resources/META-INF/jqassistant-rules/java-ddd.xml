@@ -21,6 +21,29 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java-ddd:DefinedBoundedContextDependencies">
+        <requiresConcept refId="java-ddd:PrepareBoundedContext"/>
+        <description>Create the defined allowed dependencies between bounded contexts.</description>
+        <cypher><![CDATA[
+            MATCH
+              ()-[:ANNOTATED_BY]->(annotation)-[:OF_TYPE]->(annotationType:Type),
+              (annotation)-[:HAS]->(bCName:Primitive:Value{name: "name"}),
+              (annotation)-[:HAS]->(dependencies:Array:Value{name: "dependsOn"}),
+              (dependencies)-[:CONTAINS]->(dependency:Primitive:Value)
+            WHERE
+              annotationType.fqn = "org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext"
+            WITH
+              bCName.value AS dependentBCName, dependency.value AS dependencyBCName
+            MATCH
+              (dependentBC:BoundedContext{name: dependentBCName}),
+              (dependencyBC:BoundedContext{name: dependencyBCName})
+            MERGE
+              (dependentBC)-[:DEFINES_DEPENDENCY]->(dependencyBC)
+            RETURN
+              dependentBC.name AS DEPENDENT_BC, dependencyBC.name AS DEPENDENCY_BC
+        ]]></cypher>
+    </concept>
+
     <concept id="java-ddd:BoundedContextPackage">
         <requiresConcept refId="java-ddd:PrepareBoundedContext"/>
         <description>Maps all Java types which are located in a package annotated by
@@ -92,11 +115,6 @@
             RETURN
               boundedContext1.name AS Source, sum(d.weight) AS Weight, boundedContext2.name AS Target
         ]]></cypher>
-        <report type="d3js">
-            <property name="diagram-type">chord</property>
-            <property name="data-format">csv</property>
-        </report>
-
     </concept>
 
     <concept id="java-ddd:EntityPackage">
@@ -479,6 +497,36 @@
             size(boundedContexts) > 1
           RETURN
             bCType AS Type, boundedContexts AS AssignedBoundedContext
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="java-ddd:IllegalDependenciesBetweenBoundedContexts">
+        <requiresConcept refId="java-ddd:DefinedBoundedContextDependencies"/>
+        <requiresConcept refId="java-ddd:BoundedContextDependency"/>
+        <description>Checks that dependencies between bounded contexts are present only where defined.</description>
+        <cypher><![CDATA[
+          MATCH
+            (dependentBC:BoundedContext)-[:DEPENDS_ON]->(dependencyBC:BoundedContext)
+          WHERE
+            dependentBC <> dependencyBC AND
+            NOT EXISTS((dependentBC)-[:DEFINES_DEPENDENCY]->(dependencyBC))
+          RETURN
+            dependentBC.name AS DependentBoundedContext, dependencyBC.name AS Dependency
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="java-ddd:UnneededDependenciesBetweenBoundedContexts">
+        <requiresConcept refId="java-ddd:DefinedBoundedContextDependencies"/>
+        <requiresConcept refId="java-ddd:BoundedContextDependency"/>
+        <description>Checks that dependencies between bounded contexts are defined only where needed.</description>
+        <cypher><![CDATA[
+          MATCH
+            (dependentBC:BoundedContext)-[:DEFINES_DEPENDENCY]->(dependencyBC:BoundedContext)
+          WHERE
+            dependentBC <> dependencyBC AND
+            NOT EXISTS((dependentBC)-[:DEPENDS_ON]->(dependencyBC))
+          RETURN
+            dependentBC.name AS DependentBoundedContext, dependencyBC.name AS Dependency
         ]]></cypher>
     </constraint>
 

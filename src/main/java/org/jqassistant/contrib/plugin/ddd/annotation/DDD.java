@@ -22,11 +22,18 @@ public @interface DDD {
     @interface BoundedContext {
 
         /**
-         * The name of the Bounded Context.
+         * The name of the {@link BoundedContext}.
          *
          * @return The Bounded Contexts name.
          */
         String name();
+
+        /**
+         * The name of the {@link BoundedContext}s this {@link BoundedContext} may depend on.
+         *
+         * @return All {@link BoundedContext}s to which dependencies are allowed.
+         */
+        String[] dependsOn() default {};
 
     }
 
