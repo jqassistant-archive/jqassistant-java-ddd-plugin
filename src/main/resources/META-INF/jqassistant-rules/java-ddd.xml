@@ -1,8 +1,30 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
 
     <group id="java-ddd:Default">
-        <includeConcept refId="java-ddd:*" severity="info"/>
-        <includeConstraint refId="java-ddd:*"/>
+        <includeConcept refId="java-ddd:PrepareBoundedContext" severity="info"/>
+        <includeConcept refId="java-ddd:DefinedBoundedContextDependencies" severity="info"/>
+        <includeConcept refId="java-ddd:BoundedContextPackage" severity="info"/>
+        <includeConcept refId="java-ddd:BoundedContextType" severity="info"/>
+        <includeConcept refId="java-ddd:BoundedContextDependency" severity="info"/>
+        <includeConcept refId="java-ddd:EntityPackage" severity="info"/>
+        <includeConcept refId="java-ddd:EntityType" severity="info"/>
+        <includeConcept refId="java-ddd:AggregatePackage" severity="info"/>
+        <includeConcept refId="java-ddd:AggregateType" severity="info"/>
+        <includeConcept refId="java-ddd:ValueObjectPackage" severity="info"/>
+        <includeConcept refId="java-ddd:ValueObjectType" severity="info"/>
+        <includeConcept refId="java-ddd:ServicePackage" severity="info"/>
+        <includeConcept refId="java-ddd:ServiceType" severity="info"/>
+        <includeConcept refId="java-ddd:RepositoryPackage" severity="info"/>
+        <includeConcept refId="java-ddd:RepositoryType" severity="info"/>
+        <includeConcept refId="java-ddd:DomainEventPackage" severity="info"/>
+        <includeConcept refId="java-ddd:DomainEventType" severity="info"/>
+        <includeConcept refId="java-ddd:FactoryPackage" severity="info"/>
+        <includeConcept refId="java-ddd:FactoryType" severity="info"/>
+        <includeConcept refId="java-ddd:LayerPackage" severity="info"/>
+        <includeConcept refId="java-ddd:LayerType" severity="info"/>
+        <includeConstraint refId="java-ddd:TypeInMultipleBoundedContexts"/>
+        <includeConstraint refId="java-ddd:IllegalDependenciesBetweenBoundedContexts"/>
+        <includeConstraint refId="java-ddd:UnneededDependenciesBetweenBoundedContexts"/>
     </group>
 
     <concept id="java-ddd:PrepareBoundedContext">
@@ -426,63 +448,6 @@
               layer AS Type, layerName AS Layer
         ]]></cypher>
     </concept>
-
-    <constraint id="java-ddd:TransactionsByApplicationLayer">
-        <requiresConcept refId="java-ddd:LayerType"/>
-        <requiresConcept refId="java-ddd:LayerPackage"/>
-        <description>Checks that only application layer classes span transactions.</description>
-        <cypher><![CDATA[
-            MATCH
-              (nonAppType:Type:DDD:Layer)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
-            WHERE
-              annotation.fqn IN [
-                "javax.transaction.Transactional",
-                "org.springframework.transaction.annotation.Transactional",
-                "javax.ejb.TransactionAttribute"
-              ]
-              AND (nonAppType:Layer:InterfaceLayer OR nonAppType:Layer:DomainLayer OR nonAppType:InfrastructureLayer)
-            RETURN
-              nonAppType.fqn AS IllegalTransactionSpanning
-        ]]></cypher>
-    </constraint>
-
-    <constraint id="java-ddd:EntityAccessedByRepository">
-        <requiresConcept refId="java-ddd:RepositoryType"/>
-        <requiresConcept refId="java-ddd:RepositoryPackage"/>
-        <requiresConcept refId="java-ddd:EntityType"/>
-        <requiresConcept refId="java-ddd:EntityPackage"/>
-        <description>Checks that only aggregates and not entities are accessed by repositories (both as parameters and return values).</description>
-        <cypher><![CDATA[
-            MATCH
-              (repository:Type:DDD:Repository)-[:DEPENDS_ON]->(entity:Type:DDD:Entity)
-            WHERE
-              NOT entity:Aggregate
-            RETURN
-              entity.fqn AS NonAggregateType
-        ]]></cypher>
-    </constraint>
-
-    <constraint id="java-ddd:LayerDependencies">
-        <requiresConcept refId="java-ddd:LayerType"/>
-        <requiresConcept refId="java-ddd:LayerPackage"/>
-        <description>Checks that only dependencies between layers exist that are allowed by DDD.</description>
-        <cypher><![CDATA[
-            MATCH
-              (source:Type:DDD:Layer)-[:DEPENDS_ON]->(target:Type:DDD:Layer)
-            WHERE
-              source <> target AND
-              (
-                source:InterfaceLayer AND target:InfrastructureLayer OR
-                source:ApplicationLayer AND target:InfrastructureLayer OR
-                source:ApplicationLayer AND target:InterfaceLayer OR
-                source:DomainLayer AND target:InfrastructureLayer OR
-                source:DomainLayer AND target:InterfaceLayer OR
-                source:DomainLayer AND target:ApplicationLayer
-              )
-            RETURN
-              source.fqn AS Source, target.fqn AS IllegalDependency
-        ]]></cypher>
-    </constraint>
 
     <constraint id="java-ddd:TypeInMultipleBoundedContexts">
         <requiresConcept refId="java-ddd:BoundedContextType"/>

@@ -1,0 +1,66 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
+
+    <group id="java-ddd:Strict">
+        <includeConstraint refId="java-ddd:TransactionsByApplicationLayer"/>
+        <includeConstraint refId="java-ddd:EntityAccessedByRepository"/>
+        <includeConstraint refId="java-ddd:LayerDependencies"/>
+    </group>
+
+    <constraint id="java-ddd:TransactionsByApplicationLayer">
+        <requiresConcept refId="java-ddd:LayerType"/>
+        <requiresConcept refId="java-ddd:LayerPackage"/>
+        <description>Checks that only application layer classes span transactions.</description>
+        <cypher><![CDATA[
+            MATCH
+              (nonAppType:Type:DDD:Layer)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
+            WHERE
+              annotation.fqn IN [
+                "javax.transaction.Transactional",
+                "org.springframework.transaction.annotation.Transactional",
+                "javax.ejb.TransactionAttribute"
+              ]
+              AND (nonAppType:Layer:InterfaceLayer OR nonAppType:Layer:DomainLayer OR nonAppType:InfrastructureLayer)
+            RETURN
+              nonAppType.fqn AS IllegalTransactionSpanning
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="java-ddd:EntityAccessedByRepository">
+        <requiresConcept refId="java-ddd:RepositoryType"/>
+        <requiresConcept refId="java-ddd:RepositoryPackage"/>
+        <requiresConcept refId="java-ddd:EntityType"/>
+        <requiresConcept refId="java-ddd:EntityPackage"/>
+        <description>Checks that only aggregates and not entities are accessed by repositories (both as parameters and return values).</description>
+        <cypher><![CDATA[
+            MATCH
+              (repository:Type:DDD:Repository)-[:DEPENDS_ON]->(entity:Type:DDD:Entity)
+            WHERE
+              NOT entity:Aggregate
+            RETURN
+              entity.fqn AS NonAggregateType
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="java-ddd:LayerDependencies">
+        <requiresConcept refId="java-ddd:LayerType"/>
+        <requiresConcept refId="java-ddd:LayerPackage"/>
+        <description>Checks that only dependencies between layers exist that are allowed by DDD.</description>
+        <cypher><![CDATA[
+            MATCH
+              (source:Type:DDD:Layer)-[:DEPENDS_ON]->(target:Type:DDD:Layer)
+            WHERE
+              source <> target AND
+              (
+                source:InterfaceLayer AND target:InfrastructureLayer OR
+                source:ApplicationLayer AND target:InfrastructureLayer OR
+                source:ApplicationLayer AND target:InterfaceLayer OR
+                source:DomainLayer AND target:InfrastructureLayer OR
+                source:DomainLayer AND target:InterfaceLayer OR
+                source:DomainLayer AND target:ApplicationLayer
+              )
+            RETURN
+              source.fqn AS Source, target.fqn AS IllegalDependency
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>
