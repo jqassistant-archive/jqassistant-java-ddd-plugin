@@ -40,6 +40,17 @@ The annotated class will be assigned to the corresponding node.
 public class Product { }
 ----
 
+Bounded Context Dependencies::
+
+Besides defining a bounded context with a name it's also possible to define allowed dependencies between dependencies.
+The definition is done by specifying a list of bounded contexts by their name on which the defining bounded context may depend on.
+
+.Definition of allowed dependencies between bounded contexts.
+[source,java]
+----
+@BoundedContext(name = "catalog", dependsOn = {"merchant"})
+----
+
 === Domain Event
 
 A domain event is a notice about the change of state in a functional sense, to which interested parties can listen.
@@ -357,11 +368,28 @@ The annotated class will be labeled as `:DDD:Layer:InfrastructureLayer`.
 public class ProductRepositoryImpl { }
 ----
 
-== DDD Constraints
+== Default DDD Constraints
 
-The jQAssistant DDD plug-in comes with several pre-defined constraints which with check the implemented architecture against the basic DDD architectural principles.
+The jQAssistant DDD plug-in comes with several pre-defined constraints which check the implemented architecture against the basic DDD architectural principles.
 
-All constraints will be active by default and configured with a `Major`-severity.
+The following constraints will be active by default and configured with a `Major`-severity.
+
+=== java-ddd:TypeInMultipleBoundedContexts
+
+The constraint checks that each type is only part of one bounded context.
+
+=== java-ddd:IllegalDependenciesBetweenBoundedContexts
+
+The constraints checks that there are no dependencies between bounded contexts present when they are not defined.
+
+=== java-ddd:UnneededDependenciesBetweenBoundedContexts
+
+The constraint checks that there are no dependencies between bounded contexts defined which are not required by the implementation.
+
+
+== Strict DDD Constraints
+
+There are further constraints present checking more advanced and complex principles of the DDD architect which may fail especially when coming from a monolith.
 
 === java-ddd:TransactionsByApplicationLayer
 
@@ -379,8 +407,5 @@ The constraint checks that repositories do not work on entities but on aggregate
 
 The constraint checks that the aforementioned layer hierarchy is correctly implemented by the software.
 
-=== java-ddd:TypeInMultipleBoundedContexts
-
-The constraint checks that each type is only part of one bounded context.
 
 
