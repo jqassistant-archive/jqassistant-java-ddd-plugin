@@ -36,8 +36,10 @@
             WHERE
               annotationType.fqn = "org.jqassistant.contrib.plugin.ddd.annotation.DDD$BoundedContext" AND
               value.name = "name"
+            WITH
+              DISTINCT value.value AS bCName
             MERGE
-              (boundedContext:BoundedContext{name: value.value})
+              (boundedContext:DDD:BoundedContext{name: bCName})
             RETURN
               boundedContext
         ]]></cypher>
@@ -45,6 +47,8 @@
 
     <concept id="java-ddd:DefinedBoundedContextDependencies">
         <requiresConcept refId="java-ddd:PrepareBoundedContext"/>
+        <requiresConcept refId="java-ddd:BoundedContextPackage"/>
+        <requiresConcept refId="java-ddd:BoundedContextType"/>
         <description>Create the defined allowed dependencies between bounded contexts.</description>
         <cypher><![CDATA[
             MATCH
