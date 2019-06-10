@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class ValueObjectIt extends AbstractJavaPluginIT {
+public class ValueObjectTest extends AbstractJavaPluginIT {
 
     @Test
     public void valueObjectType() throws RuleException {

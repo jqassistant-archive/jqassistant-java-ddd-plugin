@@ -20,7 +20,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class LayerIt extends AbstractJavaPluginIT {
+public class LayerTest extends AbstractJavaPluginIT {
 
     @Test
     public void applicationType() throws RuleException {

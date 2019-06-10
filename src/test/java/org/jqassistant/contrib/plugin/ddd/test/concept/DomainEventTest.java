@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DomainEventIt extends AbstractJavaPluginIT {
+public class DomainEventTest extends AbstractJavaPluginIT {
 
     @Test
     public void domainEventType() throws RuleException {

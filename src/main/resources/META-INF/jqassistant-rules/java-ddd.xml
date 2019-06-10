@@ -465,7 +465,7 @@
           WHERE
             size(boundedContexts) > 1
           RETURN
-            bCType AS Type, boundedContexts AS AssignedBoundedContext
+            bCType.fqn AS Type, boundedContexts AS AssignedBoundedContexts
         ]]></cypher>
     </constraint>
 

@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BoundedContextIT extends AbstractJavaPluginIT {
+public class BoundedContextTest extends AbstractJavaPluginIT {
 
     @Test
     public void boundedContextClass() throws RuleException {

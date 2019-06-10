@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntityIt extends AbstractJavaPluginIT {
+public class EntityTest extends AbstractJavaPluginIT {
 
     @Test
     public void entityType() throws RuleException {
