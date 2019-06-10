@@ -386,26 +386,3 @@ The constraints checks that there are no dependencies between bounded contexts p
 
 The constraint checks that there are no dependencies between bounded contexts defined which are not required by the implementation.
 
-
-== Strict DDD Constraints
-
-There are further constraints present checking more advanced and complex principles of the DDD architect which may fail especially when coming from a monolith.
-
-=== java-ddd:TransactionsByApplicationLayer
-
-The constraint checks that transactions are only spanned by the application layer by checking that the following three annotations are not present in the interface, domain, and infrastructure layer
-
-- javax.transaction.Transactional
-- org.springframework.transaction.annotation.Transactional
-- javax.ejb.TransactionAttribute
-
-=== java-ddd:EntityAccessedByRepository
-
-The constraint checks that repositories do not work on entities but on aggregates by checking that they do not depend on entities.
-
-=== java-ddd:LayerDependencies
-
-The constraint checks that the aforementioned layer hierarchy is correctly implemented by the software.
-
-
-
