@@ -4,11 +4,13 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import org.apache.commons.lang3.ClassUtils;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.App;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.bc1.Product;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.bc2.OrderService;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -32,10 +34,10 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
 
     @Test
     public void boundedContextPackage() throws RuleException {
-        scanClassPathDirectory(getClassesDirectory(OrderService.class));
+        scanClassesAndPackages(App.class);
         assertEquals(applyConcept("java-ddd:BoundedContextPackage").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(1));
+        assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(2));
         assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'order'}) RETURN bC").getColumn("bC").size(), equalTo(1));
         List<TypeDescriptor> types = query("MATCH (:DDD:BoundedContext{name: 'order'})-[:CONTAINS]->(t:Type) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));
@@ -47,7 +49,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
 
     @Test
     public void definedBoundedContextDependencies() throws RuleException {
-        scanClassPathDirectory(getClassesDirectory(App.class));
+        scanClassesAndPackages(App.class);
         assertEquals(applyConcept("java-ddd:DefinedBoundedContextDependencies").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
         assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(2));
@@ -60,7 +62,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
 
     @Test
     public void boundedContextDependency() throws RuleException {
-        scanClassPathDirectory(getClassesDirectory(App.class));
+        scanClassesAndPackages(App.class);
         assertEquals(applyConcept("java-ddd:BoundedContextDependency").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
         assertThat(query("MATCH (:DDD:BoundedContext)-[d:DEPENDS_ON]->(:DDD:BoundedContext) RETURN d").getColumn("d").size(), equalTo(1));
@@ -68,4 +70,9 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    void scanClassesAndPackages(Class<?> clazz) {
+        String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", "\\\\");
+        pathOfClass = getClassesDirectory(OrderService.class).getAbsolutePath() + File.separator + pathOfClass;
+        scanClassPathDirectory(new File(pathOfClass));
+    }
 }
