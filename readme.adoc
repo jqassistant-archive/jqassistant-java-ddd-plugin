@@ -91,7 +91,7 @@ All classes in the annotated package will be labeled as `:DDD:Aggregate`.
 .Definition of aggregates at the package level.
 [source,java]
 ----
-@DomainEvent
+@Aggregate
 package com.buschmais.shop.catalog.model.aggregateroot
 ----
 
@@ -120,7 +120,7 @@ All classes in the annotated package will be labeled as `:DDD:Entity`.
 [source,java]
 ----
 @Entity
-package com.buschmais.shop.catalog.model
+package com.buschmais.shop.catalog.model.entity
 ----
 
 Type Level::
@@ -156,7 +156,7 @@ The annotated class will be labeled as `:DDD:ValueObject`.
 .Definition of value objects at the type level.
 [source,java]
 ----
-@Entity
+@ValueObject
 public class Price { }
 ----
 
@@ -199,7 +199,7 @@ All classes in the annotated package will be labeled as `:DDD:Repository`.
 .Definition of repositories at the package level.
 [source,java]
 ----
-@ValueObject
+@Repository
 package com.buschmais.shop.catalog.repository
 ----
 
@@ -226,7 +226,7 @@ All classes in the annotated package will be labeled as `:DDD:Factory`.
 .Definition of factories at the package level.
 [source,java]
 ----
-@ValueObject
+@Factory
 package com.buschmais.shop.catalog.factory
 ----
 
@@ -237,7 +237,7 @@ The annotated class will be labeled as `:DDD:Factory`.
 .Definition of factories at the type level.
 [source,java]
 ----
-@Repository
+@Factory
 public class ProdutFactory { }
 ----
 
@@ -274,7 +274,7 @@ All classes in the annotated package will be labeled as `:DDD:Layer:InterfaceLay
 [source,java]
 ----
 @InterfaceLayer
-package com.buschmais.shop.catalog.interface
+package com.buschmais.shop.catalog.interfaces
 ----
 
 Type Level::
@@ -311,7 +311,7 @@ The annotated class will be labeled as `:DDD:Layer:ApplicationLayer`.
 .Assignment to the application layer at the type level.
 [source,java]
 ----
-@InterfaceLayer
+@ApplicationLayer
 public class ProductHandler { }
 ----
 
@@ -326,7 +326,7 @@ All classes in the annotated package will be labeled as `:DDD:Layer:DomainLayer`
 .Assignement to the domain layer at the package level.
 [source,java]
 ----
-@Domain
+@DomainLayer
 package com.buschmais.shop.catalog.domain
 ----
 
@@ -354,7 +354,7 @@ All classes in the annotated package will be labeled as `:DDD:Layer:Infrastructu
 [source,java]
 ----
 @InfrastructureLayer
-package com.buschmais.shop.catalog.infrastrucute
+package com.buschmais.shop.catalog.infrastructure
 ----
 
 Type Level::
