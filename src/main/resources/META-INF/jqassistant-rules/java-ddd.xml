@@ -8,8 +8,8 @@
         <includeConcept refId="java-ddd:BoundedContextDependency" severity="info"/>
         <includeConcept refId="java-ddd:EntityPackage" severity="info"/>
         <includeConcept refId="java-ddd:EntityType" severity="info"/>
-        <includeConcept refId="java-ddd:AggregatePackage" severity="info"/>
-        <includeConcept refId="java-ddd:AggregateType" severity="info"/>
+        <includeConcept refId="java-ddd:AggregateRootPackage" severity="info"/>
+        <includeConcept refId="java-ddd:AggregateRootType" severity="info"/>
         <includeConcept refId="java-ddd:ValueObjectPackage" severity="info"/>
         <includeConcept refId="java-ddd:ValueObjectType" severity="info"/>
         <includeConcept refId="java-ddd:ServicePackage" severity="info"/>
@@ -181,14 +181,14 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java-ddd:AggregatePackage">
-        <description>Labels all Java types which are located in package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Aggregate as :DDD:Aggregate.</description>
+    <concept id="java-ddd:AggregateRootPackage">
+        <description>Labels all Java types which are located in package annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.AggregateRoot as :DDD:AggregateRoot.</description>
         <cypher><![CDATA[
 	    MATCH
               (aggregatePackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
             WHERE
               annotation.fqn IN [
-                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Aggregate"
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$AggregateRoot"
               ]
               AND packageInfo.sourceFileName = "package-info.java"
             WITH
@@ -196,26 +196,26 @@
             MATCH
               (aggregatePackage)-[:CONTAINS*]->(aggregate:Type)
 	    SET
-  	      aggregate:DDD:Aggregate
-            RETURN
-              aggregate AS Aggregate
+  	      aggregate:DDD:AggregateRoot
+        RETURN
+          aggregate AS AggregateRoot
         ]]></cypher>
     </concept>
 
-    <concept id="java-ddd:AggregateType">
+    <concept id="java-ddd:AggregateRootType">
         <description>Labels all Java types which are annotated by
-            org.jqassistant.contrib.plugin.ddd.annotation.DDD.Aggregate as :DDD:Aggregate.</description>
+            org.jqassistant.contrib.plugin.ddd.annotation.DDD.AggregateRoot as :DDD:AggregateRoot.</description>
         <cypher><![CDATA[
             MATCH
               (aggregate:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
             WHERE
               annotation.fqn IN [
-                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Aggregate"
+                "org.jqassistant.contrib.plugin.ddd.annotation.DDD$AggregateRoot"
               ]
             SET
-              aggregate:DDD:Aggregate
+              aggregate:DDD:AggregateRoot
             RETURN
-              aggregate AS Aggregate
+              aggregate AS AggregateRoot
         ]]></cypher>
     </concept>
 

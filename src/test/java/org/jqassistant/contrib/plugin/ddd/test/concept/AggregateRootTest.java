@@ -14,14 +14,14 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AggregateTest extends AbstractJavaPluginIT {
+public class AggregateRootTest extends AbstractJavaPluginIT {
 
     @Test
     public void aggregateType() throws RuleException {
         scanClasses(Aggregate1.class);
-        assertEquals(applyConcept("java-ddd:AggregateType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(applyConcept("java-ddd:AggregateRootType").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Aggregate) RETURN t").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (t:DDD:AggregateRoot) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
         assertThat(types.get(0).getName(), equalTo("Aggregate1"));
         store.commitTransaction();
@@ -30,9 +30,9 @@ public class AggregateTest extends AbstractJavaPluginIT {
     @Test
     public void aggregatePackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Aggregate2.class));
-        assertEquals(applyConcept("java-ddd:AggregatePackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(applyConcept("java-ddd:AggregateRootPackage").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Aggregate) RETURN t ORDER BY t.fqn").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (t:DDD:AggregateRoot) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));
         assertThat(types.get(0).getName(), equalTo("Aggregate1"));
         assertThat(types.get(1).getName(), equalTo("Aggregate2"));

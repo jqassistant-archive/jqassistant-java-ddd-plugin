@@ -73,11 +73,11 @@ public @interface DDD {
     @interface Entity { }
 
     /**
-     * jQAssistant annotation to mark a Java type as DDD Aggregate. When applied to a package, the annotation is in effect for all contained types.
+     * jQAssistant annotation to mark a Java type as DDD AggregateRoot. When applied to a package, the annotation is in effect for all contained types.
      */
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.TYPE, ElementType.PACKAGE})
-    @interface Aggregate { }
+    @interface AggregateRoot { }
 
     /**
      * jQAssistant annotation to mark a Java type as DDD Domain Event. When applied to a package, the annotation is in effect for all contained types.

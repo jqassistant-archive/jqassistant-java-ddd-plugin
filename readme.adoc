@@ -82,16 +82,16 @@ public class ProductCreatedEvent { }
 An aggregate is a logical, cohesive group of entities and value objects from the same bounded context.
 Manipulations to an aggregate or its contained entities and value objects may only be done through the aggregate root which
 itself represents some kind of an transaction boundary.
-Aggregates are used to gorup domain objects which need to stay absolutely consistent to each other and thus are rather small.
+Aggregates are used to group domain objects which need to stay absolutely consistent to each other and thus are rather small.
 
 Package Level::
 
-All classes in the annotated package will be labeled as `:DDD:Aggregate`.
+All classes in the annotated package will be labeled as `:DDD:AggregateRoot`.
 
 .Definition of aggregates at the package level.
 [source,java]
 ----
-@Aggregate
+@AggregateRoot
 package com.buschmais.shop.catalog.model.aggregateroot
 ----
 
@@ -102,7 +102,7 @@ The annotated class will be labeled as `:DDD:Aggregate`.
 .Definition of aggregates at the type level.
 [source,java]
 ----
-@Aggregate
+@AggregateRoot
 public class Product { }
 ----
 
