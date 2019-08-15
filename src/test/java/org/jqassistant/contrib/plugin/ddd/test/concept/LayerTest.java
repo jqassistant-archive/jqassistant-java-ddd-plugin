@@ -25,9 +25,9 @@ public class LayerTest extends AbstractJavaPluginIT {
     @Test
     public void applicationType() throws RuleException {
         scanClasses(Application1.class);
-        assertEquals(applyConcept("java-ddd:LayerType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:LayerType").getStatus());
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Layer:ApplicationLayer) RETURN t").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Application'})-[:CONTAINS]->(t:Type:Java) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
         assertThat(types.get(0).getName(), equalTo("Application1"));
         store.commitTransaction();
@@ -38,7 +38,7 @@ public class LayerTest extends AbstractJavaPluginIT {
         scanClassPathDirectory(getClassesDirectory(Application2.class));
         assertEquals(applyConcept("java-ddd:LayerPackage").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Layer:ApplicationLayer) RETURN t ORDER BY t.fqn").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Application'})-[:CONTAINS]->(t:Type:Java) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));
         assertThat(types.get(0).getName(), equalTo("Application1"));
         assertThat(types.get(1).getName(), equalTo("Application2"));
@@ -51,7 +51,7 @@ public class LayerTest extends AbstractJavaPluginIT {
         scanClasses(Domain1.class);
         assertEquals(applyConcept("java-ddd:LayerType").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Layer:DomainLayer) RETURN t").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Domain'})-[:CONTAINS]->(t:Type:Java) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
         assertThat(types.get(0).getName(), equalTo("Domain1"));
         store.commitTransaction();
@@ -62,7 +62,7 @@ public class LayerTest extends AbstractJavaPluginIT {
         scanClassPathDirectory(getClassesDirectory(Domain2.class));
         assertEquals(applyConcept("java-ddd:LayerPackage").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Layer:DomainLayer) RETURN t ORDER BY t.fqn").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Domain'})-[:CONTAINS]->(t:Type:Java) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));
         assertThat(types.get(0).getName(), equalTo("Domain1"));
         assertThat(types.get(1).getName(), equalTo("Domain2"));
@@ -75,7 +75,7 @@ public class LayerTest extends AbstractJavaPluginIT {
         scanClasses(Infrastructure1.class);
         assertEquals(applyConcept("java-ddd:LayerType").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Layer:InfrastructureLayer) RETURN t").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Infrastructure'})-[:CONTAINS]->(t:Type:Java) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
         assertThat(types.get(0).getName(), equalTo("Infrastructure1"));
         store.commitTransaction();
@@ -86,7 +86,7 @@ public class LayerTest extends AbstractJavaPluginIT {
         scanClassPathDirectory(getClassesDirectory(Infrastructure2.class));
         assertEquals(applyConcept("java-ddd:LayerPackage").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Layer:InfrastructureLayer) RETURN t ORDER BY t.fqn").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Infrastructure'})-[:CONTAINS]->(t:Type:Java) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));
         assertThat(types.get(0).getName(), equalTo("Infrastructure1"));
         assertThat(types.get(1).getName(), equalTo("Infrastructure2"));
@@ -99,7 +99,7 @@ public class LayerTest extends AbstractJavaPluginIT {
         scanClasses(Interface1.class);
         assertEquals(applyConcept("java-ddd:LayerType").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Layer:InterfaceLayer) RETURN t").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Interface'})-[:CONTAINS]->(t:Type:Java) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
         assertThat(types.get(0).getName(), equalTo("Interface1"));
         store.commitTransaction();
@@ -110,7 +110,7 @@ public class LayerTest extends AbstractJavaPluginIT {
         scanClassPathDirectory(getClassesDirectory(Interface2.class));
         assertEquals(applyConcept("java-ddd:LayerPackage").getStatus(), Result.Status.SUCCESS);
         store.beginTransaction();
-        List<TypeDescriptor> types = query("MATCH (t:DDD:Layer:InterfaceLayer) RETURN t ORDER BY t.fqn").getColumn("t");
+        List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Interface'})-[:CONTAINS]->(t:Type:Java) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));
         assertThat(types.get(0).getName(), equalTo("Interface1"));
         assertThat(types.get(1).getName(), equalTo("Interface2"));

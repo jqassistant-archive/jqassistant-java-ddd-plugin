@@ -245,30 +245,24 @@ public class ProdutFactory { }
 
 Besides the definition of functional concepts in DDD there are also requirements to the technical layering of the application stated.
 
-.Technical layers in DDD
-[plantuml, ddd-layering, svg]
-----
-component "Interface Layer" as interface
-component "Application Layer" as application
-component "Domain Layer" as domain
-component "Infrastructure Layer" as infrastructure
+Per layer, a new node labeled as ':DDD:Layer' with a name property will be created. All classes annotated as being part of a specific layer will be
+associated to the respective layer node using a 'CONTAINS' relation.
 
-interface --> application
-interface --> domain
-interface --> infrastructure
-application --> domain
-application --> infrastructure
-domain --> infrastructure
-----
+Following nodes will be created:
+
+* (:DDD:Layer {name: 'Interface'})
+* (:DDD:Layer {name: 'Application'})
+* (:DDD:Layer {name: 'Domain'})
+* (:DDD:Layer {name: 'Infrastructure})
 
 ==== InterfaceLayer
 
-The infrastructure layer is the outermost layer in a DDD-architecture, providing access to the application to other services and the user.
+The interface layer is the outermost layer in a DDD-architecture, providing access to the application to other services and the user.
 This layer is very thin and provides only rudimentary functionality for e.g. request handling. No domain logic shall be implemented by this layer.
 
 Package Level::
 
-All classes in the annotated package will be labeled as `:DDD:Layer:InterfaceLayer`.
+All classes in the annotated package will associated to the (:DDD:Layer {name: 'Interface'}) node.
 
 .Assignement to the interface layer at the package level.
 [source,java]
@@ -279,7 +273,7 @@ package com.buschmais.shop.catalog.interfaces
 
 Type Level::
 
-The annotated class will be labeled as `:DDD:Layer:InterfaceLayer`.
+The annotated class will be associated to the (:DDD:Layer {name: 'Interface'}) node.
 
 .Assignment to the interface layer at the type level.
 [source,java]
@@ -291,11 +285,11 @@ public class ProductController { }
 ==== ApplicationLayer
 
 The application layer is a thin layer orchestrating business use cases and spanning transactions.
-It implements no specific domain logic but coordinates the correct execution of scenarios.
+It implements no specific domain logic but coordinates the correct execution of scenarios and takes care of aspects like transaction handling.
 
 Package Level::
 
-All classes in the annotated package will be labeled as `:DDD:Layer:ApplicationLayer`.
+All classes in the annotated package will be associated to the (:DDD:Layer {name: 'Application'}) node.
 
 .Assignement to the application layer at the package level.
 [source,java]
@@ -306,7 +300,7 @@ package com.buschmais.shop.catalog.application
 
 Type Level::
 
-The annotated class will be labeled as `:DDD:Layer:ApplicationLayer`.
+The annotated class will be associated to the (:DDD:Layer {name: 'Application'}) node.
 
 .Assignment to the application layer at the type level.
 [source,java]
@@ -321,7 +315,7 @@ The domain layer is the heart of a DDD-structured application and implements the
 
 Package Level::
 
-All classes in the annotated package will be labeled as `:DDD:Layer:DomainLayer`.
+All classes in the annotated package will be associated to the (:DDD:Layer {name: 'Domain'}) node.
 
 .Assignement to the domain layer at the package level.
 [source,java]
@@ -332,9 +326,9 @@ package com.buschmais.shop.catalog.domain
 
 Type Level::
 
-The annotated class will be labeled as `:DDD:Layer:Domain`.
+The annotated class will be associated to the (:DDD:Layer {name: 'Domain'}) node.
 
-.Assignment to the interface layer at the type level.
+.Assignment to the domain layer at the type level.
 [source,java]
 ----
 @DomainLayer
@@ -343,12 +337,13 @@ public class ProductService { }
 
 ==== InfrastructureLayer
 
-The infrastructure layer is the supporting layer for the other layer providing technical implementations like database access.
+The infrastructure layer is the supporting layer for the other layers providing technical implementations like database access.
+
 Infrastructure can both be present in the bounded context scope (like when providing access to the product table) or in global scope, e.g. for sending e-mails.
 
 Package Level::
 
-All classes in the annotated package will be labeled as `:DDD:Layer:InfrastructureLayer`.
+All classes in the annotated package will be associated to the (:DDD:Layer {name: 'Infrastructure}) node.
 
 .Assignement to the infrastructure layer at the package level.
 [source,java]
@@ -359,7 +354,7 @@ package com.buschmais.shop.catalog.infrastructure
 
 Type Level::
 
-The annotated class will be labeled as `:DDD:Layer:InfrastructureLayer`.
+The annotated class will be associated to the (:DDD:Layer {name: 'Infrastructure}) node.
 
 .Assignment to the infrastructure layer at the type level.
 [source,java]
@@ -373,6 +368,10 @@ public class ProductRepositoryImpl { }
 The jQAssistant DDD plug-in comes with several pre-defined constraints which check the implemented architecture against the basic DDD architectural principles.
 
 The following constraints will be active by default and configured with a `Major`-severity.
+
+=== java-ddd:TypeInMultipleLayers
+
+The constraint checks that each type is only part of one layer.
 
 === java-ddd:TypeInMultipleBoundedContexts
 

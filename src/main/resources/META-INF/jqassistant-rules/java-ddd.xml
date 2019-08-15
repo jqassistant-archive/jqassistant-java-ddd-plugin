@@ -20,8 +20,10 @@
         <includeConcept refId="java-ddd:DomainEventType" severity="info"/>
         <includeConcept refId="java-ddd:FactoryPackage" severity="info"/>
         <includeConcept refId="java-ddd:FactoryType" severity="info"/>
+        <includeConcept refId="java-ddd:PrepareLayer" severity="info"/>
         <includeConcept refId="java-ddd:LayerPackage" severity="info"/>
         <includeConcept refId="java-ddd:LayerType" severity="info"/>
+        <includeConstraint refId="java-ddd:TypeInMultipleLayerss"/>
         <includeConstraint refId="java-ddd:TypeInMultipleBoundedContexts"/>
         <includeConstraint refId="java-ddd:IllegalDependenciesBetweenBoundedContexts"/>
         <includeConstraint refId="java-ddd:UnneededDependenciesBetweenBoundedContexts"/>
@@ -410,9 +412,30 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java-ddd:PrepareLayer">
+        <description>Creates a node for each of the following layer: Interface, Application, Domain, Infrastructure.</description>
+        <cypher><![CDATA[
+            MERGE
+              (:DDD:Layer{name: "Interface"})
+            MERGE
+              (:DDD:Layer{name: "Application"})
+            MERGE
+              (:DDD:Layer{name: "Domain"})
+            MERGE
+              (i:DDD:Layer{name: "Infrastructure"})
+            WITH
+              i
+            MATCH
+              (layer:DDD:Layer)
+            RETURN
+              layer.name AS Layer
+        ]]></cypher>
+    </concept>
+
     <concept id="java-ddd:LayerPackage">
-        <description>Labels all Java types which are annotated by
-            org.jqassistant.contrib.plugin.ddd.annotation.DDD.Layer.X as :DDD:Layer:X.</description>
+        <requiresConcept refId="java-ddd:PrepareLayer"/>
+        <description>Associates all Java types in packages which are annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Layer.X
+            to the respective layer.</description>
         <cypher><![CDATA[
             MATCH
               (layerPackage:Package)-[:CONTAINS]->(packageInfo:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
@@ -422,36 +445,53 @@
             WITH
               layerPackage, annotation
             MATCH
-              (layerPackage)-[:CONTAINS*]->(layer:Type)
+              (layerPackage)-[:CONTAINS*]->(type:Type)
             WITH
-              layer AS layer, annotation.name AS layerName
-            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$InterfaceLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:InterfaceLayer)
-            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$ApplicationLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:ApplicationLayer)
-            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$DomainLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:DomainLayer)
-            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$InfrastructureLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:InfrastructureLayer)
+              type, replace(replace(annotation.name, "DDD$Layer$", ""), "Layer", "") AS layerName
+            MATCH
+              (layer:DDD:Layer{name: layerName})
+            MERGE
+              (layer)-[:CONTAINS]->(type)
             RETURN
-              layer AS Type, layerName AS Layer
+              type.fqn AS Type, layer.name AS Layer
         ]]></cypher>
     </concept>
 
     <concept id="java-ddd:LayerType">
-        <description>Labels all Java types which are annotated by
-            org.jqassistant.contrib.plugin.ddd.annotation.DDD.Layer.X as :DDD:Layer:X.</description>
+        <requiresConcept refId="java-ddd:PrepareLayer"/>
+        <description>Associates all Java types which are annotated by org.jqassistant.contrib.plugin.ddd.annotation.DDD.Layer.X
+            to the respective layer.</description>
         <cypher><![CDATA[
             MATCH
-              (layer:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
+              (type:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
             WHERE
               annotation.fqn STARTS WITH "org.jqassistant.contrib.plugin.ddd.annotation.DDD$Layer$"
             WITH
-              layer AS layer, annotation.name AS layerName
-            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$InterfaceLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:InterfaceLayer)
-            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$ApplicationLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:ApplicationLayer)
-            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$DomainLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:DomainLayer)
-            FOREACH (type in CASE WHEN layerName =  "DDD$Layer$InfrastructureLayer" THEN [1] ELSE [] END | SET layer:DDD:Layer:InfrastructureLayer)
+              type, replace(replace(annotation.name, "DDD$Layer$", ""), "Layer", "")  AS layerName
+            MATCH
+              (layer:DDD:Layer{name: layerName})
+            MERGE
+              (layer)-[:CONTAINS]->(type)
             RETURN
-              layer AS Type, layerName AS Layer
+              type.fqn AS Type, layer.name AS Layer
         ]]></cypher>
     </concept>
+
+    <constraint id="java-ddd:TypeInMultipleLayers">
+        <requiresConcept refId="java-ddd:LayerType"/>
+        <requiresConcept refId="java-ddd:LayerPackage"/>
+        <description>Checks that a single DDD type is only part of one layer.</description>
+        <cypher><![CDATA[
+          MATCH
+            (layer:DDD:Layer)-[:CONTAINS]->(type:Type)
+          WITH
+            type, collect(layer.name) AS layers
+          WHERE
+            size(layers) > 1
+          RETURN
+            type.fqn AS Type, layers AS AssignedLayers
+        ]]></cypher>
+    </constraint>
 
     <constraint id="java-ddd:TypeInMultipleBoundedContexts">
         <requiresConcept refId="java-ddd:BoundedContextType"/>
@@ -459,7 +499,7 @@
         <description>Checks that a single DDD type is only part of one bounded context.</description>
         <cypher><![CDATA[
           MATCH
-            (boundedContext:BoundedContext)-[:CONTAINS]->(bCType:Type)
+            (boundedContext:DDD:BoundedContext)-[:CONTAINS]->(bCType:Type)
           WITH
             bCType, collect(boundedContext.name) AS boundedContexts
           WHERE
@@ -475,7 +515,7 @@
         <description>Checks that dependencies between bounded contexts are present only where defined.</description>
         <cypher><![CDATA[
           MATCH
-            (dependentBC:BoundedContext)-[:DEPENDS_ON]->(dependencyBC:BoundedContext)
+            (dependentBC:DDD:BoundedContext)-[:DEPENDS_ON]->(dependencyBC:DDD:BoundedContext)
           WHERE
             dependentBC <> dependencyBC AND
             NOT EXISTS((dependentBC)-[:DEFINES_DEPENDENCY]->(dependencyBC))
@@ -490,7 +530,7 @@
         <description>Checks that dependencies between bounded contexts are defined only where needed.</description>
         <cypher><![CDATA[
           MATCH
-            (dependentBC:BoundedContext)-[:DEFINES_DEPENDENCY]->(dependencyBC:BoundedContext)
+            (dependentBC:DDD:BoundedContext)-[:DEFINES_DEPENDENCY]->(dependencyBC:DDD:BoundedContext)
           WHERE
             dependentBC <> dependencyBC AND
             NOT EXISTS((dependentBC)-[:DEPENDS_ON]->(dependencyBC))
