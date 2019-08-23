@@ -19,7 +19,7 @@ public class ServiceTest extends AbstractJavaPluginIT {
     @Test
     public void serviceType() throws RuleException {
         scanClasses(Service1.class);
-        assertEquals(applyConcept("java-ddd:ServiceType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:ServiceType").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:Service) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
@@ -30,7 +30,7 @@ public class ServiceTest extends AbstractJavaPluginIT {
     @Test
     public void servicePackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Service2.class));
-        assertEquals(applyConcept("java-ddd:ServicePackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:ServicePackage").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:Service) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));

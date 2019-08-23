@@ -19,7 +19,7 @@ public class AggregateRootTest extends AbstractJavaPluginIT {
     @Test
     public void aggregateType() throws RuleException {
         scanClasses(Aggregate1.class);
-        assertEquals(applyConcept("java-ddd:AggregateRootType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:AggregateRootType").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:AggregateRoot) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
@@ -30,7 +30,7 @@ public class AggregateRootTest extends AbstractJavaPluginIT {
     @Test
     public void aggregatePackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Aggregate2.class));
-        assertEquals(applyConcept("java-ddd:AggregateRootPackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:AggregateRootPackage").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:AggregateRoot) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));

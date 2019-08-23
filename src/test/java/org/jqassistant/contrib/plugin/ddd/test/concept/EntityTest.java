@@ -19,7 +19,7 @@ public class EntityTest extends AbstractJavaPluginIT {
     @Test
     public void entityType() throws RuleException {
         scanClasses(Entity1.class);
-        assertEquals(applyConcept("java-ddd:EntityType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:EntityType").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:Entity) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
@@ -30,7 +30,7 @@ public class EntityTest extends AbstractJavaPluginIT {
     @Test
     public void entityPackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Entity2.class));
-        assertEquals(applyConcept("java-ddd:EntityPackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:EntityPackage").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:Entity) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));

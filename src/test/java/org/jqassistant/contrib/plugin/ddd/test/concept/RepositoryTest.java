@@ -19,7 +19,7 @@ public class RepositoryTest extends AbstractJavaPluginIT {
     @Test
     public void repositoryType() throws RuleException {
         scanClasses(Repository1.class);
-        assertEquals(applyConcept("java-ddd:RepositoryType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:RepositoryType").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:Repository) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
@@ -30,7 +30,7 @@ public class RepositoryTest extends AbstractJavaPluginIT {
     @Test
     public void repositoryPackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Repository2.class));
-        assertEquals(applyConcept("java-ddd:RepositoryPackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:RepositoryPackage").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:Repository) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));

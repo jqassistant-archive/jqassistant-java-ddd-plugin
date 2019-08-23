@@ -22,7 +22,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
     @Test
     public void boundedContextClass() throws RuleException {
         scanClasses(Product.class);
-        assertEquals(applyConcept("java-ddd:BoundedContextType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextType").getStatus());
         store.beginTransaction();
         assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(1));
         assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'catalog'}) RETURN bC").getColumn("bC").size(), equalTo(1));
@@ -35,7 +35,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
     @Test
     public void boundedContextPackage() throws RuleException {
         scanClassesAndPackages(App.class);
-        assertEquals(applyConcept("java-ddd:BoundedContextPackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextPackage").getStatus());
         store.beginTransaction();
         assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(2));
         assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'order'}) RETURN bC").getColumn("bC").size(), equalTo(1));
@@ -50,7 +50,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
     @Test
     public void definedBoundedContextDependencies() throws RuleException {
         scanClassesAndPackages(App.class);
-        assertEquals(applyConcept("java-ddd:DefinedBoundedContextDependencies").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:DefinedBoundedContextDependencies").getStatus());
         store.beginTransaction();
         assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(2));
         assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'catalog'}) RETURN bC").getColumn("bC").size(), equalTo(1));
@@ -63,7 +63,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
     @Test
     public void boundedContextDependency() throws RuleException {
         scanClassesAndPackages(App.class);
-        assertEquals(applyConcept("java-ddd:BoundedContextDependency").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextDependency").getStatus());
         store.beginTransaction();
         assertThat(query("MATCH (:DDD:BoundedContext)-[d:DEPENDS_ON]->(:DDD:BoundedContext) RETURN d").getColumn("d").size(), equalTo(1));
         assertThat(query("MATCH (:DDD:BoundedContext{name: 'order'})-[d:DEPENDS_ON]->(:DDD:BoundedContext{name: 'catalog'}) RETURN d").getColumn("d").size(), equalTo(1));
@@ -72,7 +72,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
 
     void scanClassesAndPackages(Class<?> clazz) {
         String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", "\\\\");
-        pathOfClass = getClassesDirectory(OrderService.class).getAbsolutePath() + File.separator + pathOfClass;
+        pathOfClass = getClassesDirectory(clazz).getAbsolutePath() + File.separator + pathOfClass;
         scanClassPathDirectory(new File(pathOfClass));
     }
 }

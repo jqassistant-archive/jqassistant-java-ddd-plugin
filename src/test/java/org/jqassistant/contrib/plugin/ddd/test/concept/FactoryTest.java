@@ -19,7 +19,7 @@ public class FactoryTest extends AbstractJavaPluginIT {
     @Test
     public void factoryType() throws RuleException {
         scanClasses(Factory1.class);
-        assertEquals(applyConcept("java-ddd:FactoryType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:FactoryType").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:Factory) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
@@ -30,7 +30,7 @@ public class FactoryTest extends AbstractJavaPluginIT {
     @Test
     public void factoryPackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Factory2.class));
-        assertEquals(applyConcept("java-ddd:FactoryPackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:FactoryPackage").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:Factory) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));
