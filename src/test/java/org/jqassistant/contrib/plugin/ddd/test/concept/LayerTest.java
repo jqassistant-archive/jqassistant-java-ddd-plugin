@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -110,7 +111,7 @@ public class LayerTest extends AbstractJavaPluginIT {
     }
 
     void scanClassesAndPackages(Class<?> clazz) {
-        String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", "\\\\");
+        String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", Matcher.quoteReplacement(File.separator));
         pathOfClass = getClassesDirectory(clazz).getAbsolutePath() + File.separator + pathOfClass;
         scanClassPathDirectory(new File(pathOfClass));
     }

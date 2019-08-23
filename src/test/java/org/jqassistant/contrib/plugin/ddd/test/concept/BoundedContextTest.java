@@ -7,11 +7,11 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.apache.commons.lang3.ClassUtils;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.App;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.bc1.Product;
-import org.jqassistant.contrib.plugin.ddd.test.set.bc.bc2.OrderService;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -71,7 +71,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
     }
 
     void scanClassesAndPackages(Class<?> clazz) {
-        String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", "\\\\");
+        String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", Matcher.quoteReplacement(File.separator));
         pathOfClass = getClassesDirectory(clazz).getAbsolutePath() + File.separator + pathOfClass;
         scanClassPathDirectory(new File(pathOfClass));
     }
