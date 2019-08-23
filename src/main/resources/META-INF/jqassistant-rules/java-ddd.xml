@@ -23,7 +23,7 @@
         <includeConcept refId="java-ddd:PrepareLayer" severity="info"/>
         <includeConcept refId="java-ddd:LayerPackage" severity="info"/>
         <includeConcept refId="java-ddd:LayerType" severity="info"/>
-        <includeConstraint refId="java-ddd:TypeInMultipleLayerss"/>
+        <includeConstraint refId="java-ddd:TypeInMultipleLayers"/>
         <includeConstraint refId="java-ddd:TypeInMultipleBoundedContexts"/>
         <includeConstraint refId="java-ddd:IllegalDependenciesBetweenBoundedContexts"/>
         <includeConstraint refId="java-ddd:UnneededDependenciesBetweenBoundedContexts"/>
