@@ -19,7 +19,7 @@ public class ValueObjectTest extends AbstractJavaPluginIT {
     @Test
     public void valueObjectType() throws RuleException {
         scanClasses(ValueObject1.class);
-        assertEquals(applyConcept("java-ddd:ValueObjectType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:ValueObjectType").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:ValueObject) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
@@ -30,7 +30,7 @@ public class ValueObjectTest extends AbstractJavaPluginIT {
     @Test
     public void valueOjectPackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(ValueObject2.class));
-        assertEquals(applyConcept("java-ddd:ValueObjectPackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:ValueObjectPackage").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:ValueObject) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));

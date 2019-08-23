@@ -19,7 +19,7 @@ public class DomainEventTest extends AbstractJavaPluginIT {
     @Test
     public void domainEventType() throws RuleException {
         scanClasses(DomainEvent1.class);
-        assertEquals(applyConcept("java-ddd:DomainEventType").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:DomainEventType").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:DomainEvent) RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
@@ -30,7 +30,7 @@ public class DomainEventTest extends AbstractJavaPluginIT {
     @Test
     public void domainEventPackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(DomainEvent2.class));
-        assertEquals(applyConcept("java-ddd:DomainEventPackage").getStatus(), Result.Status.SUCCESS);
+        assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:DomainEventPackage").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:DomainEvent) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size(), equalTo(3));
