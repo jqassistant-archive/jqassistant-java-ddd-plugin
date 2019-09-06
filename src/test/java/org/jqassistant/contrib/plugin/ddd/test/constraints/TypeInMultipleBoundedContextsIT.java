@@ -5,16 +5,17 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.violation.bc1.MultipleBoundedContext;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TypeInMultipleBoundedContextsTest extends AbstractJavaPluginIT {
+public class TypeInMultipleBoundedContextsIT extends AbstractJavaPluginIT {
 
     @Test
-    public void testTypeInMultipleBoundedContexts() throws RuleException {
+    public void testTypeInMultipleBoundedContexts() throws RuleException, IOException {
         scanClassPathDirectory(getClassesDirectory(MultipleBoundedContext.class));
         assertEquals(applyConcept("java-ddd:BoundedContextType").getStatus(), Result.Status.SUCCESS);
         assertEquals(applyConcept("java-ddd:BoundedContextPackage").getStatus(), Result.Status.SUCCESS);

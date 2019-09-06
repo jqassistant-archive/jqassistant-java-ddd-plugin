@@ -6,18 +6,19 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.entity.Entity1;
 import org.jqassistant.contrib.plugin.ddd.test.set.entity.Entity2;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntityTest extends AbstractJavaPluginIT {
+public class EntityIT extends AbstractJavaPluginIT {
 
     @Test
-    public void entityType() throws RuleException {
+    public void entityType() throws RuleException, IOException {
         scanClasses(Entity1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:EntityType").getStatus());
         store.beginTransaction();
@@ -28,7 +29,7 @@ public class EntityTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void entityPackage() throws RuleException {
+    public void entityPackage() throws RuleException, IOException {
         scanClassPathDirectory(getClassesDirectory(Entity2.class));
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:EntityPackage").getStatus());
         store.beginTransaction();

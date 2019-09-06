@@ -7,9 +7,10 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.apache.commons.lang3.ClassUtils;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.App;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.bc1.Product;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -17,10 +18,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BoundedContextTest extends AbstractJavaPluginIT {
+public class BoundedContextIT extends AbstractJavaPluginIT {
 
     @Test
-    public void boundedContextClass() throws RuleException {
+    public void boundedContextClass() throws RuleException, IOException {
         scanClasses(Product.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextType").getStatus());
         store.beginTransaction();
@@ -33,7 +34,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void boundedContextPackage() throws RuleException {
+    public void boundedContextPackage() throws RuleException, IOException {
         scanClassesAndPackages(App.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextPackage").getStatus());
         store.beginTransaction();
@@ -48,7 +49,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void definedBoundedContextDependencies() throws RuleException {
+    public void definedBoundedContextDependencies() throws RuleException, IOException {
         scanClassesAndPackages(App.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:DefinedBoundedContextDependencies").getStatus());
         store.beginTransaction();
@@ -61,7 +62,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void boundedContextDependency() throws RuleException {
+    public void boundedContextDependency() throws RuleException, IOException {
         scanClassesAndPackages(App.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextDependency").getStatus());
         store.beginTransaction();
@@ -70,7 +71,7 @@ public class BoundedContextTest extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
-    void scanClassesAndPackages(Class<?> clazz) {
+    void scanClassesAndPackages(Class<?> clazz) throws IOException {
         String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", Matcher.quoteReplacement(File.separator));
         pathOfClass = getClassesDirectory(clazz).getAbsolutePath() + File.separator + pathOfClass;
         scanClassPathDirectory(new File(pathOfClass));

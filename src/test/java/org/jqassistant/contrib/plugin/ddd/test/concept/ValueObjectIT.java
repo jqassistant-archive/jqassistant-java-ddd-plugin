@@ -6,18 +6,19 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.valueobject.ValueObject1;
 import org.jqassistant.contrib.plugin.ddd.test.set.valueobject.ValueObject2;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class ValueObjectTest extends AbstractJavaPluginIT {
+public class ValueObjectIT extends AbstractJavaPluginIT {
 
     @Test
-    public void valueObjectType() throws RuleException {
+    public void valueObjectType() throws RuleException, IOException {
         scanClasses(ValueObject1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:ValueObjectType").getStatus());
         store.beginTransaction();
@@ -28,7 +29,7 @@ public class ValueObjectTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void valueOjectPackage() throws RuleException {
+    public void valueOjectPackage() throws RuleException, IOException {
         scanClassPathDirectory(getClassesDirectory(ValueObject2.class));
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:ValueObjectPackage").getStatus());
         store.beginTransaction();

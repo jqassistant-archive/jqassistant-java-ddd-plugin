@@ -6,18 +6,19 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.domainevent.DomainEvent1;
 import org.jqassistant.contrib.plugin.ddd.test.set.domainevent.DomainEvent2;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DomainEventTest extends AbstractJavaPluginIT {
+public class DomainEventIT extends AbstractJavaPluginIT {
 
     @Test
-    public void domainEventType() throws RuleException {
+    public void domainEventType() throws RuleException, IOException {
         scanClasses(DomainEvent1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:DomainEventType").getStatus());
         store.beginTransaction();
@@ -28,7 +29,7 @@ public class DomainEventTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void domainEventPackage() throws RuleException {
+    public void domainEventPackage() throws RuleException, IOException {
         scanClassPathDirectory(getClassesDirectory(DomainEvent2.class));
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:DomainEventPackage").getStatus());
         store.beginTransaction();

@@ -6,18 +6,19 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.repository.Repository1;
 import org.jqassistant.contrib.plugin.ddd.test.set.repository.Repository2;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class RepositoryTest extends AbstractJavaPluginIT {
+public class RepositoryIT extends AbstractJavaPluginIT {
 
     @Test
-    public void repositoryType() throws RuleException {
+    public void repositoryType() throws RuleException, IOException {
         scanClasses(Repository1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:RepositoryType").getStatus());
         store.beginTransaction();
@@ -28,7 +29,7 @@ public class RepositoryTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void repositoryPackage() throws RuleException {
+    public void repositoryPackage() throws RuleException, IOException {
         scanClassPathDirectory(getClassesDirectory(Repository2.class));
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:RepositoryPackage").getStatus());
         store.beginTransaction();

@@ -10,9 +10,10 @@ import org.jqassistant.contrib.plugin.ddd.test.set.layer.application.Application
 import org.jqassistant.contrib.plugin.ddd.test.set.layer.domain.Domain1;
 import org.jqassistant.contrib.plugin.ddd.test.set.layer.infrastructure.Infrastructure1;
 import org.jqassistant.contrib.plugin.ddd.test.set.layer.interfaces.Interface1;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -20,10 +21,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class LayerTest extends AbstractJavaPluginIT {
+public class LayerIT extends AbstractJavaPluginIT {
 
     @Test
-    public void interfaceType() throws RuleException {
+    public void interfaceType() throws RuleException, IOException {
         scanClasses(Interface1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:LayerType").getStatus());
         store.beginTransaction();
@@ -34,7 +35,7 @@ public class LayerTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void applicationType() throws RuleException {
+    public void applicationType() throws RuleException, IOException {
         scanClasses(Application1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:LayerType").getStatus());
         store.beginTransaction();
@@ -45,7 +46,7 @@ public class LayerTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void domainType() throws RuleException {
+    public void domainType() throws RuleException, IOException {
         scanClasses(Domain1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:LayerType").getStatus());
         store.beginTransaction();
@@ -56,7 +57,7 @@ public class LayerTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void infrastructureType() throws RuleException {
+    public void infrastructureType() throws RuleException, IOException {
         scanClasses(Infrastructure1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:LayerType").getStatus());
         store.beginTransaction();
@@ -67,7 +68,7 @@ public class LayerTest extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void layerPackage() throws RuleException {
+    public void layerPackage() throws RuleException, IOException {
         scanClassesAndPackages(LayerApp.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:LayerPackage").getStatus());
         store.beginTransaction();
@@ -110,7 +111,7 @@ public class LayerTest extends AbstractJavaPluginIT {
         assertThat(types.get(2).getName(), equalTo("package-info"));
     }
 
-    void scanClassesAndPackages(Class<?> clazz) {
+    void scanClassesAndPackages(Class<?> clazz) throws IOException {
         String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", Matcher.quoteReplacement(File.separator));
         pathOfClass = getClassesDirectory(clazz).getAbsolutePath() + File.separator + pathOfClass;
         scanClassPathDirectory(new File(pathOfClass));
