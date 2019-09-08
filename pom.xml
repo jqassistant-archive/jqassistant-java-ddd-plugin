@@ -34,6 +34,14 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git:git@github.com:jqassistant-contrib/jqassistant-java-ddd-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jqassistant-contrib/jqassistant-java-ddd-plugin.git
+        </developerConnection>
+        <url>https://github.com/jqassistant-contrib/jqassistant-java-ddd-plugin</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <licenses>
         <license>
             <name>GNU General Public License, v3</name>
