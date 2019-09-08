@@ -5,9 +5,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.violation.layer1.Layer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TypeInMultipleLayersIT extends AbstractJavaPluginIT {
 
     @Test
-    public void testTypeInMultipleBoundedContexts() throws RuleException, IOException {
+    public void testTypeInMultipleBoundedContexts() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Layer.class));
         //assertEquals(applyConcept("java-ddd:BoundedContextType").getStatus(), Result.Status.SUCCESS);
         //assertEquals(applyConcept("java-ddd:BoundedContextPackage").getStatus(), Result.Status.SUCCESS);

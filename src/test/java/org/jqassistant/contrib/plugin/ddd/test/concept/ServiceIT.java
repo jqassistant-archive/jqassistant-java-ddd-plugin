@@ -6,9 +6,8 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.service.Service1;
 import org.jqassistant.contrib.plugin.ddd.test.set.service.Service2;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -18,7 +17,7 @@ import static org.junit.Assert.assertThat;
 public class ServiceIT extends AbstractJavaPluginIT {
 
     @Test
-    public void serviceType() throws RuleException, IOException {
+    public void serviceType() throws RuleException {
         scanClasses(Service1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:ServiceType").getStatus());
         store.beginTransaction();
@@ -29,7 +28,7 @@ public class ServiceIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void servicePackage() throws RuleException, IOException {
+    public void servicePackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Service2.class));
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:ServicePackage").getStatus());
         store.beginTransaction();

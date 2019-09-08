@@ -6,9 +6,8 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.aggregate.Aggregate1;
 import org.jqassistant.contrib.plugin.ddd.test.set.aggregate.Aggregate2;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AggregateRootIT extends AbstractJavaPluginIT {
 
     @Test
-    public void aggregateType() throws RuleException, IOException {
+    public void aggregateType() throws RuleException {
         scanClasses(Aggregate1.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:AggregateRootType").getStatus());
         store.beginTransaction();
@@ -29,7 +28,7 @@ public class AggregateRootIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void aggregatePackage() throws RuleException, IOException {
+    public void aggregatePackage() throws RuleException {
         scanClassPathDirectory(getClassesDirectory(Aggregate2.class));
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:AggregateRootPackage").getStatus());
         store.beginTransaction();

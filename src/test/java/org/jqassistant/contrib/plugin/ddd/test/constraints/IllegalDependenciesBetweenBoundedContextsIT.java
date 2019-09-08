@@ -6,9 +6,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.violation.bc1.BC1;
 import org.jqassistant.contrib.plugin.ddd.test.set.violation.bc2.IllegalDependency;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class IllegalDependenciesBetweenBoundedContextsIT extends AbstractJavaPluginIT {
 
     @Test
-    public void testIllegalDependenciesBetweenBoundedContexts() throws RuleException, IOException {
+    public void testIllegalDependenciesBetweenBoundedContexts() throws RuleException {
         scanClasses(IllegalDependency.class, BC1.class);
         assertEquals(applyConcept("java-ddd:BoundedContextDependency").getStatus(), Result.Status.SUCCESS);
         Result<Constraint> result = validateConstraint("java-ddd:IllegalDependenciesBetweenBoundedContexts");

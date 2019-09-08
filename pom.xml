@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.jqassistant.contrib.common</groupId>
         <artifactId>parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.7.0-MS3</version>
     </parent>
 
     <groupId>org.jqassistant.contrib.plugin</groupId>
     <artifactId>jqassistant-java-ddd-plugin</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
 
     <name>jQAssistant Java DDD Plugin</name>
     <url>http://jqassistant.org/</url>
@@ -71,7 +71,7 @@
 
     <properties>
         <maven.surefire.version>2.22.2</maven.surefire.version>
-        <jqassistant.version>1.6.0</jqassistant.version>
+        <jqassistant.version>1.7.0-MS3</jqassistant.version>
         <junit.version>5.4.2</junit.version>
     </properties>
 
