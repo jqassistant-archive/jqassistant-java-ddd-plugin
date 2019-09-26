@@ -385,3 +385,13 @@ The constraints checks that there are no dependencies between bounded contexts p
 
 The constraint checks that there are no dependencies between bounded contexts defined which are not required by the implementation.
 
+== Visual Reporting
+
+The DDD plug-in supports visualization of concepts using PlantUML in jQAssistant reports for the following concepts:
+
+* Bounded Context
+* Layer (Interface, Application, Domain, Infrastructure)
+
+To use this functionality, define the jQAssistant concept with the following property set:
+
+* `reportType="plantuml-component-diagram"`

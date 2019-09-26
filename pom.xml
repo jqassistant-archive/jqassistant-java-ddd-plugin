@@ -102,6 +102,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>report</artifactId>
+            <version>${jqassistant.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>store</artifactId>
+            <version>${jqassistant.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>common</artifactId>
             <type>test-jar</type>
