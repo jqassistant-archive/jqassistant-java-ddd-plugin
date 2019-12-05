@@ -1,8 +1,8 @@
 package org.jqassistant.contrib.plugin.ddd.report;
 
-import com.buschmais.jqassistant.core.report.api.Language;
-import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
+import com.buschmais.jqassistant.core.report.api.model.Language;
+import com.buschmais.jqassistant.core.report.api.model.LanguageElement;
 import org.jqassistant.contrib.plugin.ddd.descriptor.BoundedContextDescriptor;
 import org.jqassistant.contrib.plugin.ddd.descriptor.LayerDescriptor;
 

@@ -1,7 +1,7 @@
 package org.jqassistant.contrib.plugin.ddd.test.concept;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.aggregate.Aggregate1;
@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AggregateRootIT extends AbstractJavaPluginIT {
@@ -22,8 +21,8 @@ public class AggregateRootIT extends AbstractJavaPluginIT {
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:AggregateRootType").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:AggregateRoot) RETURN t").getColumn("t");
-        assertThat(types.size(), equalTo(1));
-        assertThat(types.get(0).getName(), equalTo("Aggregate1"));
+        assertThat(types.size()).isEqualTo(1);
+        assertThat(types.get(0).getName()).isEqualTo("Aggregate1");
         store.commitTransaction();
     }
 
@@ -33,10 +32,10 @@ public class AggregateRootIT extends AbstractJavaPluginIT {
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:AggregateRootPackage").getStatus());
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (t:DDD:AggregateRoot) RETURN t ORDER BY t.fqn").getColumn("t");
-        assertThat(types.size(), equalTo(3));
-        assertThat(types.get(0).getName(), equalTo("Aggregate1"));
-        assertThat(types.get(1).getName(), equalTo("Aggregate2"));
-        assertThat(types.get(2).getName(), equalTo("package-info"));
+        assertThat(types.size()).isEqualTo(3);
+        assertThat(types.get(0).getName()).isEqualTo("Aggregate1");
+        assertThat(types.get(1).getName()).isEqualTo("Aggregate2");
+        assertThat(types.get(2).getName()).isEqualTo("package-info");
         store.commitTransaction();
     }
 }

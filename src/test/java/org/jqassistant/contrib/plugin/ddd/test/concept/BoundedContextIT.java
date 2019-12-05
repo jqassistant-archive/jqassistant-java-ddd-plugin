@@ -1,7 +1,7 @@
 package org.jqassistant.contrib.plugin.ddd.test.concept;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.apache.commons.lang3.ClassUtils;
@@ -13,8 +13,7 @@ import java.io.File;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BoundedContextIT extends AbstractJavaPluginIT {
@@ -24,11 +23,11 @@ public class BoundedContextIT extends AbstractJavaPluginIT {
         scanClasses(Product.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextType").getStatus());
         store.beginTransaction();
-        assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(1));
-        assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'catalog'}) RETURN bC").getColumn("bC").size(), equalTo(1));
+        assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size()).isEqualTo(1);
+        assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'catalog'}) RETURN bC").getColumn("bC").size()).isEqualTo(1);
         List<TypeDescriptor> types = query("MATCH (:DDD:BoundedContext{name: 'catalog'})-[:CONTAINS]->(t:Type) RETURN t").getColumn("t");
-        assertThat(types.size(), equalTo(1));
-        assertThat(types.get(0).getName(), equalTo("Product"));
+        assertThat(types.size()).isEqualTo(1);
+        assertThat(types.get(0).getName()).isEqualTo("Product");
         store.commitTransaction();
     }
 
@@ -37,13 +36,13 @@ public class BoundedContextIT extends AbstractJavaPluginIT {
         scanClassesAndPackages(App.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextPackage").getStatus());
         store.beginTransaction();
-        assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(2));
-        assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'order'}) RETURN bC").getColumn("bC").size(), equalTo(1));
+        assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size()).isEqualTo(2);
+        assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'order'}) RETURN bC").getColumn("bC").size()).isEqualTo(1);
         List<TypeDescriptor> types = query("MATCH (:DDD:BoundedContext{name: 'order'})-[:CONTAINS]->(t:Type) RETURN t ORDER BY t.fqn").getColumn("t");
-        assertThat(types.size(), equalTo(3));
-        assertThat(types.get(0).getName(), equalTo("OrderRepository"));
-        assertThat(types.get(1).getName(), equalTo("OrderService"));
-        assertThat(types.get(2).getName(), equalTo("package-info"));
+        assertThat(types.size()).isEqualTo(3);
+        assertThat(types.get(0).getName()).isEqualTo("OrderRepository");
+        assertThat(types.get(1).getName()).isEqualTo("OrderService");
+        assertThat(types.get(2).getName()).isEqualTo("package-info");
         store.commitTransaction();
     }
 
@@ -52,11 +51,11 @@ public class BoundedContextIT extends AbstractJavaPluginIT {
         scanClassesAndPackages(App.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:DefinedBoundedContextDependencies").getStatus());
         store.beginTransaction();
-        assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size(), equalTo(2));
-        assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'catalog'}) RETURN bC").getColumn("bC").size(), equalTo(1));
-        assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'order'}) RETURN bC").getColumn("bC").size(), equalTo(1));
-        assertThat(query("MATCH (:DDD:BoundedContext)-[d:DEFINES_DEPENDENCY]->(:DDD:BoundedContext) RETURN d").getColumn("d").size(), equalTo(1));
-        assertThat(query("MATCH (:DDD:BoundedContext{name: 'order'})-[d:DEFINES_DEPENDENCY]->(:DDD:BoundedContext{name: 'catalog'}) RETURN d").getColumn("d").size(), equalTo(1));
+        assertThat(query("MATCH (bC:DDD:BoundedContext) RETURN bC").getColumn("bC").size()).isEqualTo(2);
+        assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'catalog'}) RETURN bC").getColumn("bC").size()).isEqualTo(1);
+        assertThat(query("MATCH (bC:DDD:BoundedContext{name: 'order'}) RETURN bC").getColumn("bC").size()).isEqualTo(1);
+        assertThat(query("MATCH (:DDD:BoundedContext)-[d:DEFINES_DEPENDENCY]->(:DDD:BoundedContext) RETURN d").getColumn("d").size()).isEqualTo(1);
+        assertThat(query("MATCH (:DDD:BoundedContext{name: 'order'})-[d:DEFINES_DEPENDENCY]->(:DDD:BoundedContext{name: 'catalog'}) RETURN d").getColumn("d").size()).isEqualTo(1);
         store.commitTransaction();
     }
 
@@ -65,8 +64,8 @@ public class BoundedContextIT extends AbstractJavaPluginIT {
         scanClassesAndPackages(App.class);
         assertEquals(Result.Status.SUCCESS, applyConcept("java-ddd:BoundedContextDependency").getStatus());
         store.beginTransaction();
-        assertThat(query("MATCH (:DDD:BoundedContext)-[d:DEPENDS_ON]->(:DDD:BoundedContext) RETURN d").getColumn("d").size(), equalTo(1));
-        assertThat(query("MATCH (:DDD:BoundedContext{name: 'order'})-[d:DEPENDS_ON]->(:DDD:BoundedContext{name: 'catalog'}) RETURN d").getColumn("d").size(), equalTo(1));
+        assertThat(query("MATCH (:DDD:BoundedContext)-[d:DEPENDS_ON]->(:DDD:BoundedContext) RETURN d").getColumn("d").size()).isEqualTo(1);
+        assertThat(query("MATCH (:DDD:BoundedContext{name: 'order'})-[d:DEPENDS_ON]->(:DDD:BoundedContext{name: 'catalog'}) RETURN d").getColumn("d").size()).isEqualTo(1);
         store.commitTransaction();
     }
 

@@ -1,8 +1,8 @@
 package org.jqassistant.contrib.plugin.ddd.test.constraints;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleException;
+import com.buschmais.jqassistant.core.report.api.model.Result;
+import com.buschmais.jqassistant.core.rule.api.model.Constraint;
+import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.violation.layer1.Layer;
 import org.junit.jupiter.api.Test;
