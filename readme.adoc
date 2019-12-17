@@ -1,5 +1,57 @@
 = jQAssistant DDD Plugin
 
+The jQAssistant DDD Plugin provides means to map DDD language elements onto the code and to enrich this information in the graph
+in order to apply additional, DDD-general as well as project specific, concepts and constraints.
+
+== Usage of the jQAssistant DDD Plugin
+
+To make use of the provided annotations (as will be shown in the next section), following dependency is needed to be defined:
+
+[source, xml]
+----
+<dependency>
+    <groupId>org.jqassistant.contrib.plugin</groupId>
+    <artifactId>jqassistant-java-ddd-annotations</artifactId>
+    <version>${jqassistant.version}</version>
+</dependency>
+----
+
+Additionally, to have jQAssistant consider the annotations and to allow the execution of constraints, following dependency
+in the `jqassistant-maven-plugin` needs to be defined:
+
+[source, xml]
+----
+<plugin>
+    <groupId>com.buschmais.jqassistant</groupId>
+    <artifactId>jqassistant-maven-plugin</artifactId>
+    <version>${jqassistant.version}</version>
+    <executions>
+        <execution>
+            <id>default-cli</id>
+            <goals>
+                <goal>scan</goal>
+                <goal>analyze</goal>
+            </goals>
+            <configuration>
+                <groups>
+                    <group>java-ddd:Default</group> // <2>
+                </groups>
+            </configuration>
+        </execution>
+    </executions>
+    <dependencies>
+        <dependency> // <1>
+            <groupId>org.jqassistant.contrib.plugin</groupId>
+            <artifactId>jqassistant-java-ddd-maven-plugin</artifactId>
+            <version>${jqassistant.version}</version>
+        </dependency>
+    </dependencies>
+</plugin>
+----
+<1> Definition of the plugin dependency
+<2> Definition of the java-ddd:Default group to be executed
+
+
 == DDD Concepts
 
 The jQAssistant DDD plugin comes with jQA-concepts and Java-annotations for multiple DDD concepts. The supported DDD-concepts
