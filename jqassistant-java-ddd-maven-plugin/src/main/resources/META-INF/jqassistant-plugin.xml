@@ -7,5 +7,6 @@
     </model>
     <rules>
         <resource>java-ddd.xml</resource>
+        <resource>java-ddd-strict.xml</resource>
     </rules>
 </jqa-plugin:jqassistant-plugin>

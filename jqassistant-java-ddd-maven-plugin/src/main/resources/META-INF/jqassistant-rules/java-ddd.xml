@@ -23,6 +23,7 @@
         <includeConcept refId="java-ddd:PrepareLayer" severity="info"/>
         <includeConcept refId="java-ddd:LayerPackage" severity="info"/>
         <includeConcept refId="java-ddd:LayerType" severity="info"/>
+        <includeConcept refId="java-ddd:LayerDependency" severity="info"/>
         <includeConstraint refId="java-ddd:TypeInMultipleLayers"/>
         <includeConstraint refId="java-ddd:TypeInMultipleBoundedContexts"/>
         <includeConstraint refId="java-ddd:IllegalDependenciesBetweenBoundedContexts"/>
@@ -474,6 +475,24 @@
               (layer)-[:CONTAINS]->(type)
             RETURN
               type.fqn AS Type, layer.name AS Layer
+        ]]></cypher>
+    </concept>
+
+    <concept id="java-ddd:LayerDependency">
+        <requiresConcept refId="java-ddd:LayerPackage"/>
+        <requiresConcept refId="java-ddd:LayerType"/>
+        <description>Propagates the dependencies between Types of different Layers to the level of Layers including an aggregated weight.</description>
+        <cypher><![CDATA[
+            MATCH
+              (layer1:DDD:Layer)-[:CONTAINS]->(layerType1:Type),
+              (layer2:DDD:Layer)-[:CONTAINS]->(layerType2:Type),
+              (layerType1)-[d:DEPENDS_ON]->(layerType2)
+            WITH
+              layer1, layer2, sum(d.weight) AS totalWeight
+            MERGE
+              (layer1)-[d:DEPENDS_ON{weight: totalWeight}]->(layer2)
+            RETURN
+              layer1.name AS Source, sum(d.weight) AS Weight, layer2.name AS Target
         ]]></cypher>
     </concept>
 

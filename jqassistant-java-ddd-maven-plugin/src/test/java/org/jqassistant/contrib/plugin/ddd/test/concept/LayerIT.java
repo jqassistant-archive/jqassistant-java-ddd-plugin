@@ -76,6 +76,22 @@ public class LayerIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    public void layerDependency() throws RuleException {
+        scanClassesAndPackages(LayerApp.class);
+        assertThat(applyConcept("java-ddd:LayerDependency").getStatus()).isEqualTo(Result.Status.SUCCESS);
+        store.beginTransaction();
+        assertThat(query("MATCH (layer:DDD:Layer) RETURN layer").getColumn("layer").size()).isEqualTo(4);
+        assertThat(query("MATCH (:DDD:Layer)-[d:DEFINES_DEPENDENCY]->(:DDD:Layer) RETURN d").getColumn("d").size()).isEqualTo(6);
+        assertThat(query("MATCH (:DDD:Layer{name: 'Infrastructure'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Interface'}) RETURN d").getColumn("d").size()).isEqualTo(1);
+        assertThat(query("MATCH (:DDD:Layer{name: 'Infrastructure'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Application'}) RETURN d").getColumn("d").size()).isEqualTo(1);
+        assertThat(query("MATCH (:DDD:Layer{name: 'Infrastructure'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Domain'}) RETURN d").getColumn("d").size()).isEqualTo(1);
+        assertThat(query("MATCH (:DDD:Layer{name: 'Interface'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Application'}) RETURN d").getColumn("d").size()).isEqualTo(1);
+        assertThat(query("MATCH (:DDD:Layer{name: 'Interface'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Domain'}) RETURN d").getColumn("d").size()).isEqualTo(1);
+        assertThat(query("MATCH (:DDD:Layer{name: 'Application'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Domain'}) RETURN d").getColumn("d").size()).isEqualTo(1);
+        store.commitTransaction();
+    }
+
     private void verifyInterfaceLayerPackage() {
         List<TypeDescriptor> types = query("MATCH (:DDD:Layer{name: 'Interface'})-[:CONTAINS]->(t:Type:Java) RETURN t ORDER BY t.fqn").getColumn("t");
         assertThat(types.size()).isEqualTo(3);
