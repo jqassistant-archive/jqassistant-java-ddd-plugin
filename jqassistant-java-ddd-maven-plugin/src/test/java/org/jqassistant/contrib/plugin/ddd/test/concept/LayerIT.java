@@ -77,9 +77,9 @@ public class LayerIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void layerDependency() throws RuleException {
+    public void definedLayerDependencies() throws RuleException {
         scanClassesAndPackages(LayerApp.class);
-        assertThat(applyConcept("java-ddd:LayerDependency").getStatus()).isEqualTo(Result.Status.SUCCESS);
+        assertThat(applyConcept("java-ddd:DefinedLayerDependencies").getStatus()).isEqualTo(Result.Status.SUCCESS);
         store.beginTransaction();
         assertThat(query("MATCH (layer:DDD:Layer) RETURN layer").getColumn("layer").size()).isEqualTo(4);
         assertThat(query("MATCH (:DDD:Layer)-[d:DEFINES_DEPENDENCY]->(:DDD:Layer) RETURN d").getColumn("d").size()).isEqualTo(6);
@@ -89,6 +89,26 @@ public class LayerIT extends AbstractJavaPluginIT {
         assertThat(query("MATCH (:DDD:Layer{name: 'Interface'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Application'}) RETURN d").getColumn("d").size()).isEqualTo(1);
         assertThat(query("MATCH (:DDD:Layer{name: 'Interface'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Domain'}) RETURN d").getColumn("d").size()).isEqualTo(1);
         assertThat(query("MATCH (:DDD:Layer{name: 'Application'})-[d:DEFINES_DEPENDENCY]->(:DDD:Layer{name: 'Domain'}) RETURN d").getColumn("d").size()).isEqualTo(1);
+        store.commitTransaction();
+    }
+
+    @Test
+    public void layerDependency() throws RuleException {
+        scanClassesAndPackages(LayerApp.class);
+        assertThat(applyConcept("java-ddd:LayerDependency").getStatus()).isEqualTo(Result.Status.SUCCESS);
+        store.beginTransaction();
+        assertThat(query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) " +
+                         "WHERE t1.fqn STARTS WITH 'org.jqassistant.contrib.plugin.ddd.test.set.layer' AND " +
+                               "t2.fqn STARTS WITH 'org.jqassistant.contrib.plugin.ddd.test.set.layer' " +
+                         "RETURN t1.name, t2.name").getRows().size()).isEqualTo(12);
+        assertThat(query("MATCH (l:DDD:Layer)-[:CONTAINS]->(t:Type) WHERE t.name <> 'package-info' RETURN l.name, t.name").getRows().size()).isEqualTo(8);
+        TestResult queryResult = query("MATCH (l1:DDD:Layer)-[:CONTAINS]->(t1:Type), " +
+                                              "(l2:DDD:Layer)-[:CONTAINS]->(t2:Type), " +
+                                              "(t1)-[d:DEPENDS_ON]->(t2) " +
+                                       "RETURN l1.name AS Source, l2.name AS Target");
+        // this should return 12 rows but returns 6
+        assertThat(queryResult.getRows().size()).isEqualTo(12);
+        assertThat(query("MATCH (:DDD:Layer)-[d:DEPENDS_ON]->(:DDD:Layer) RETURN d").getColumn("d").size()).isEqualTo(12);
         store.commitTransaction();
     }
 
