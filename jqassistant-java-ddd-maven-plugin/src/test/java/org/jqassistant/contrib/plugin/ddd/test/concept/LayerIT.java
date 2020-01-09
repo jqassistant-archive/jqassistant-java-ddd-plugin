@@ -3,8 +3,8 @@ package org.jqassistant.contrib.plugin.ddd.test.concept;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import org.apache.commons.lang3.ClassUtils;
 import org.jqassistant.contrib.plugin.ddd.test.set.layer.LayerApp;
 import org.jqassistant.contrib.plugin.ddd.test.set.layer.application.Application1;
 import org.jqassistant.contrib.plugin.ddd.test.set.layer.domain.Domain1;
@@ -12,9 +12,9 @@ import org.jqassistant.contrib.plugin.ddd.test.set.layer.infrastructure.Infrastr
 import org.jqassistant.contrib.plugin.ddd.test.set.layer.interfaces.Interface1;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,14 +98,14 @@ public class LayerIT extends AbstractJavaPluginIT {
         assertThat(applyConcept("java-ddd:LayerDependency").getStatus()).isEqualTo(Result.Status.SUCCESS);
         store.beginTransaction();
         assertThat(query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) " +
-                         "WHERE t1.fqn STARTS WITH 'org.jqassistant.contrib.plugin.ddd.test.set.layer' AND " +
-                               "t2.fqn STARTS WITH 'org.jqassistant.contrib.plugin.ddd.test.set.layer' " +
-                         "RETURN t1.name, t2.name").getRows().size()).isEqualTo(12);
+            "WHERE t1.fqn STARTS WITH 'org.jqassistant.contrib.plugin.ddd.test.set.layer' AND " +
+            "t2.fqn STARTS WITH 'org.jqassistant.contrib.plugin.ddd.test.set.layer' " +
+            "RETURN t1.name, t2.name").getRows().size()).isEqualTo(12);
         assertThat(query("MATCH (l:DDD:Layer)-[:CONTAINS]->(t:Type) WHERE t.name <> 'package-info' RETURN l.name, t.name").getRows().size()).isEqualTo(8);
         TestResult queryResult = query("MATCH (l1:DDD:Layer)-[:CONTAINS]->(t1:Type), " +
-                                              "(l2:DDD:Layer)-[:CONTAINS]->(t2:Type), " +
-                                              "(t1)-[d:DEPENDS_ON]->(t2) " +
-                                       "RETURN l1.name AS Source, l2.name AS Target");
+            "(l2:DDD:Layer)-[:CONTAINS]->(t2:Type), " +
+            "(t1)-[d:DEPENDS_ON]->(t2) " +
+            "RETURN l1.name AS Source, l2.name AS Target");
         // this should return 12 rows but returns 6
         assertThat(queryResult.getRows().size()).isEqualTo(12);
         assertThat(query("MATCH (:DDD:Layer)-[d:DEPENDS_ON]->(:DDD:Layer) RETURN d").getColumn("d").size()).isEqualTo(12);
@@ -145,9 +145,9 @@ public class LayerIT extends AbstractJavaPluginIT {
     }
 
     void scanClassesAndPackages(Class<?> clazz) {
-        String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", Matcher.quoteReplacement(File.separator));
-        pathOfClass = getClassesDirectory(clazz).getAbsolutePath() + File.separator + pathOfClass;
-        scanClassPathDirectory(new File(pathOfClass));
+        Map<String, Object> pluginProps = new HashMap<>();
+        pluginProps.put("file.include", "/" + clazz.getPackage().getName().replace(".", "/") + "/**");
+        getScanner(pluginProps).scan(getClassesDirectory(clazz), "/", JavaScope.CLASSPATH);
     }
 
 }
