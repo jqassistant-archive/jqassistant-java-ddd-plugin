@@ -540,6 +540,8 @@
             NOT EXISTS((dependentBC)-[:DEFINES_DEPENDENCY]->(dependencyBC))
           RETURN
             dependentBC.name AS DependentBoundedContext, dependencyBC.name AS Dependency
+          ORDER BY
+            DependentBoundedContext, Dependency
         ]]></cypher>
     </constraint>
 

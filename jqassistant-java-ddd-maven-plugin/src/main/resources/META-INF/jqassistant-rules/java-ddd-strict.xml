@@ -40,6 +40,8 @@
             NOT EXISTS((dependentLayer)-[:DEFINES_DEPENDENCY]->(dependencyLayer))
           RETURN
             dependentLayer.name AS DependentLayer, dependencyLayer.name AS Dependency
+          ORDER BY
+            DependentLayer, Dependency
         ]]></cypher>
     </constraint>
 

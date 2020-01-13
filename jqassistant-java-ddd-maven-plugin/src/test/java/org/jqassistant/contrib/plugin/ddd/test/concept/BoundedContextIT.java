@@ -3,20 +3,17 @@ package org.jqassistant.contrib.plugin.ddd.test.concept;
 import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import org.apache.commons.lang3.ClassUtils;
+import org.jqassistant.contrib.plugin.ddd.test.AbstractJavaDDDPluginIT;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.App;
 import org.jqassistant.contrib.plugin.ddd.test.set.bc.bc1.Product;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BoundedContextIT extends AbstractJavaPluginIT {
+public class BoundedContextIT extends AbstractJavaDDDPluginIT {
 
     @Test
     public void boundedContextClass() throws RuleException {
@@ -69,9 +66,4 @@ public class BoundedContextIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
-    void scanClassesAndPackages(Class<?> clazz) {
-        String pathOfClass = ClassUtils.getPackageCanonicalName(clazz).replaceAll("\\.", Matcher.quoteReplacement(File.separator));
-        pathOfClass = getClassesDirectory(clazz).getAbsolutePath() + File.separator + pathOfClass;
-        scanClassPathDirectory(new File(pathOfClass));
-    }
 }
