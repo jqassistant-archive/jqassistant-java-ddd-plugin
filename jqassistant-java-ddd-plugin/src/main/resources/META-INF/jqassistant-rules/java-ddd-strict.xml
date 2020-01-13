@@ -1,0 +1,48 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/rule/schema/v1.4">
+
+    <group id="java-ddd:Strict">
+        <includeConcept refId="java-ddd:DefinedLayerDependencies"/>
+        <includeConstraint refId="java-ddd:TypeInMultipleLayers"/>
+    </group>
+
+    <concept id="java-ddd:DefinedLayerDependencies">
+        <requiresConcept refId="java-ddd:LayerPackage"/>
+        <requiresConcept refId="java-ddd:LayerType"/>
+        <description>Enriches the information about allowed dependencies between technical layers.</description>
+        <cypher><![CDATA[
+          WITH
+          [
+            ["Infrastructure", "Interface"], ["Infrastructure", "Application"], ["Infrastructure", "Domain"],
+            ["Interface", "Application"], ["Interface", "Domain"],
+            ["Application", "Domain"]
+          ] AS allowedDependencies
+          UNWIND
+            allowedDependencies AS allowedDependency
+          MATCH
+            (dependentLayer:DDD:Layer{name: allowedDependency[0]}),
+            (dependencyLayer:DDD:Layer{name: allowedDependency[1]})
+          MERGE
+            (dependentLayer)-[:DEFINES_DEPENDENCY]->(dependencyLayer)
+          RETURN
+            dependentLayer.name, dependencyLayer.name
+        ]]></cypher>
+    </concept>
+
+    <constraint id="java-ddd:IllegalDependenciesBetweenTechnicalLayers">
+        <requiresConcept refId="java-ddd:LayerDependency"/>
+        <requiresConcept refId="java-ddd:DefinedLayerDependencies"/>
+        <description>Checks that only allowed dependencies between Layers are implemented.</description>
+        <cypher><![CDATA[
+          MATCH
+            (dependentLayer:DDD:Layer)-[:DEPENDS_ON]->(dependencyLayer:DDD:Layer)
+          WHERE
+            dependentLayer <> dependencyLayer AND
+            NOT EXISTS((dependentLayer)-[:DEFINES_DEPENDENCY]->(dependencyLayer))
+          RETURN
+            dependentLayer.name AS DependentLayer, dependencyLayer.name AS Dependency
+          ORDER BY
+            DependentLayer, Dependency
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>
