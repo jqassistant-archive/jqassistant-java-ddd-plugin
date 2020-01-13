@@ -10,7 +10,7 @@
         <version>1.8.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jqassistant-java-ddd-maven-plugin</artifactId>
+    <artifactId>jqassistant-java-ddd-plugin</artifactId>
 
     <dependencies>
         <dependency>

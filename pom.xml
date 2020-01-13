@@ -54,7 +54,7 @@
     </properties>
 
     <modules>
-        <module>jqassistant-java-ddd-maven-plugin</module>
+        <module>jqassistant-java-ddd-plugin</module>
         <module>jqassistant-java-ddd-annotations</module>
     </modules>
 

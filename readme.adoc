@@ -42,7 +42,7 @@ in the `jqassistant-maven-plugin` needs to be defined:
     <dependencies>
         <dependency> // <1>
             <groupId>org.jqassistant.contrib.plugin</groupId>
-            <artifactId>jqassistant-java-ddd-maven-plugin</artifactId>
+            <artifactId>jqassistant-java-ddd-plugin</artifactId>
             <version>${jqassistant.version}</version>
         </dependency>
     </dependencies>
