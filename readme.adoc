@@ -491,3 +491,11 @@ The DDD plug-in supports visualization of concepts using PlantUML in jQAssistant
 To use this functionality, define the jQAssistant concept with the following property set:
 
 * `reportType="plantuml-component-diagram"`
+
+== Licensing
+
+The `jqassistant-java-ddd-annotations` module is licensed under the Apache License, Version 2.0.
+Therefore, it can be added as a direct dependency to the project without the need to disclose the source code.
+
+The `jqassistant-java-ddd-plugin` module is licensed under the GNU GENERAL PUBLIC LICENSE, Version 3 due to the dependency to Neo4j.
+However, as this will be declared as a dependency of the `jqassistant-maven-plugin` (which is a build plugin), it will not end up in the delivery.
