@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jqassistant.contrib.common</groupId>
         <artifactId>parent</artifactId>
-        <version>1.8.0-MS1</version>
+        <version>1.8.0</version>
     </parent>
 
     <groupId>org.jqassistant.contrib.plugin</groupId>
@@ -44,8 +44,8 @@
 
     <licenses>
         <license>
-            <name>GNU General Public License, v3</name>
-            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
 
