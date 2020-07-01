@@ -2,7 +2,7 @@
 
     <group id="java-ddd:Strict">
         <includeConcept refId="java-ddd:DefinedLayerDependencies"/>
-        <includeConstraint refId="java-ddd:TypeInMultipleLayers"/>
+        <includeConstraint refId="java-ddd:IllegalDependenciesBetweenTechnicalLayers"/>
     </group>
 
     <concept id="java-ddd:DefinedLayerDependencies">
