@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jqassistant.contrib.common</groupId>
         <artifactId>parent</artifactId>
-        <version>1.8.0</version>
+        <version>1.9.0</version>
     </parent>
 
     <groupId>org.jqassistant.contrib.plugin</groupId>
@@ -48,36 +48,10 @@
         </license>
     </licenses>
 
-    <properties>
-        <jqassistant.version>1.8.0</jqassistant.version>
-    </properties>
-
     <modules>
         <module>jqassistant-java-ddd-plugin</module>
         <module>jqassistant-java-ddd-annotations</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
@@ -85,31 +59,6 @@
                 <groupId>org.jqassistant.contrib.plugin</groupId>
                 <artifactId>jqassistant-java-ddd-annotations</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>plugin</artifactId>
-                <version>${jqassistant.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>java</artifactId>
-                <version>${jqassistant.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>report</artifactId>
-                <version>${jqassistant.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>store</artifactId>
-                <version>${jqassistant.version}</version>
-                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
