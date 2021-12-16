@@ -1,3 +1,5 @@
+> **_NOTE:_**  This project was superseded jMolecules and its integration. All information can be found here: https://github.com/jqassistant-contrib/jqassistant-jmolecules-plugin[jMolecules-jQAssistant-Plugin]
+
 = jQAssistant DDD Plugin
 
 The jQAssistant DDD Plugin provides means to map DDD language elements onto the code and to enrich this information in the graph
